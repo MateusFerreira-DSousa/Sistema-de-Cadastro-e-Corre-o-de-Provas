@@ -1,0 +1,193 @@
+/* RESET E CONFIGURAÇÕES GERAIS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: #f8fafc;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* NAVBAR */
+.navbar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 18px 0;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2563eb;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-links a {
+  color: #64748b;
+  text-decoration: none;
+  margin-left: 24px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: #2563eb;
+}
+
+/* HERO SECTION */
+.hero {
+  padding: 60px 0 80px;
+}
+
+.hero-content {
+  text-align: center;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.badge {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.hero-description {
+  font-size: 1.125rem;
+  color: #475569;
+  margin-bottom: 50px;
+}
+
+/* PORTAL DE ACESSO (CARDS) */
+.access-portal {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.access-portal h2 {
+  font-size: 1.35rem;
+  color: #334155;
+  margin-bottom: 24px;
+}
+
+.portal-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.card {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 30px 24px;
+  text-align: center;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card-professor:hover {
+  border-color: #2563eb;
+}
+
+.card-aluno:hover {
+  border-color: #059669;
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.card p {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+/* BOTAOES */
+.btn {
+  display: inline-block;
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.btn-professor {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.btn-professor:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-aluno {
+  background-color: #059669;
+  color: #ffffff;
+}
+
+.btn-aluno:hover {
+  background-color: #047857;
+}
+
+
+/* RESPONSIVIDADE (TELAS MENORES / CELULARES) */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+  
+  .portal-cards, .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .access-portal {
+    padding: 20px;
+  }
+}
