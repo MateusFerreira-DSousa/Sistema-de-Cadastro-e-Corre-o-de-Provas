@@ -265,7 +265,11 @@ body {
 .form-group input[type="email"],
 .form-group input[type="tel"],
 .form-group input[type="date"],
-.form-group input[type="password"] {
+.form-group input[type="password"],
+.form-group input[type="time"],
+.form-group select,
+.form-group textarea,
+.form-control {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid #cbd5e1;
@@ -583,4 +587,191 @@ input.input-error {
     .main-layout {
         grid-template-columns: 1fr;
     }
+}
+
+/* ========================================================
+   ESTILOS DO MVP (login, admin, provas, aluno)
+   ======================================================== */
+
+.btn {
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  width: auto;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+}
+
+.btn-secondary {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.btn-secondary:hover {
+  background-color: #cbd5e1;
+}
+
+.btn-perigo {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.btn-perigo:hover {
+  background-color: #fee2e2;
+}
+
+button.btn-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+}
+
+.btn-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 16px;
+}
+
+.user-badge-aluno {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+.success-message {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.error-message {
+  margin-bottom: 16px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.auth-links {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.auth-links a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.container > .content-area + .content-area {
+  margin-top: 24px;
+}
+
+.form-row-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.aviso {
+  background-color: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.help-text {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.questao-bloco {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.questao-bloco legend {
+  font-weight: 700;
+  padding: 0 6px;
+}
+
+.opcao-item .form-control {
+  flex: 1;
+}
+
+.opcao-aluno {
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.opcao-aluno:hover {
+  background-color: #f1f5f9;
+}
+
+.opcao-aluno:has(input:checked) {
+  background-color: #dbeafe;
+}
+
+.enunciado-prova {
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+}
+
+.prova-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.timer {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #dc2626;
+  white-space: nowrap;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.nota {
+  font-weight: 700;
+}
+
+.nota-alta { color: #166534; }
+.nota-baixa { color: #dc2626; }
+
+.data-table {
+  margin-top: 8px;
+}
+
+@media (max-width: 520px) {
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
 }

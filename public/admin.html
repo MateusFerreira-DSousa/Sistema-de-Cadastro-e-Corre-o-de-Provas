@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administração - Sistema de Correção de Provas</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+
+  <header class="dashboard-header">
+    <div class="container header-container">
+      <div class="logo-area">
+        <span class="user-badge">Administração</span>
+      </div>
+      <div class="user-info">
+        <span>Olá, <strong class="nome-usuario"></strong></span>
+        <a href="acessoprof.html" class="btn-link">Provas</a>
+        <button type="button" class="btn-logout" onclick="sair()">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="content-area">
+      <h2>Cadastrar professor ou aluno</h2>
+      <p class="section-desc">O aluno só vê as provas da turma dele. Por enquanto só há turmas do 9º ano (A a I).</p>
+
+      <form id="form-usuario" class="form-card">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="idRole">Papel:</label>
+            <select id="idRole" name="role">
+              <option value="aluno">Aluno</option>
+              <option value="professor">Professor</option>
+            </select>
+          </div>
+          <div class="form-group" id="grupo-turma">
+            <label for="idTurma">Turma:</label>
+            <select id="idTurma" name="turma" required>
+              <option value="">Selecione a turma</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="idNome">Nome completo:</label>
+          <input type="text" id="idNome" name="nome" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="idLogin">Login:</label>
+            <input type="text" id="idLogin" name="login" autocomplete="off" required>
+          </div>
+          <div class="form-group">
+            <label for="idSenha">Senha (mín. 8 caracteres):</label>
+            <input type="text" id="idSenha" name="senha" minlength="8" autocomplete="off" required>
+          </div>
+        </div>
+
+        <div id="mensagem" hidden role="alert"></div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-salvar">Cadastrar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="content-area">
+      <h2>Professores e alunos</h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>Nome</th><th>Login</th><th>Papel</th><th>Turma</th><th></th></tr>
+        </thead>
+        <tbody id="lista-usuarios"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const form = document.getElementById('form-usuario');
+    const campoRole = document.getElementById('idRole');
+    const campoTurma = document.getElementById('idTurma');
+
+    // Turma só vale para aluno.
+    function ajustarTurma() {
+      const aluno = campoRole.value === 'aluno';
+      document.getElementById('grupo-turma').hidden = !aluno;
+      campoTurma.required = aluno;
+    }
+    campoRole.addEventListener('change', ajustarTurma);
+
+    let usuarios = [];
+
+    async function carregar() {
+      usuarios = await api('/api/usuarios');
+      document.getElementById('lista-usuarios').innerHTML = usuarios.map((u) => `
+        <tr>
+          <td>${esc(u.nome)}</td>
+          <td>${esc(u.login)}</td>
+          <td>${u.role === 'aluno' ? 'Aluno' : 'Professor'}</td>
+          <td>${esc(u.turma ?? '—')}</td>
+          <td><button type="button" class="btn btn-sm btn-perigo" onclick="excluir(${u.id})">Excluir</button></td>
+        </tr>`).join('') || '<tr><td colspan="5">Ninguém cadastrado ainda.</td></tr>';
+    }
+
+    async function excluir(id) {
+      const nome = usuarios.find((u) => u.id === id).nome;
+      if (!confirm(`Excluir ${nome}? As provas enviadas por esse aluno também serão apagadas.`)) return;
+      try {
+        await api('/api/usuarios/excluir', { id });
+        carregar();
+      } catch (erro) {
+        alert(erro.message);
+      }
+    }
+
+    form.addEventListener('submit', async (evento) => {
+      evento.preventDefault();
+      const mensagem = document.getElementById('mensagem');
+      try {
+        await api('/api/usuarios', Object.fromEntries(new FormData(form)));
+        mostrarMensagem(mensagem, 'Cadastrado com sucesso.', true);
+        // Mantém papel e turma para cadastrar o próximo da mesma turma.
+        ['idNome', 'idLogin', 'idSenha'].forEach((id) => { document.getElementById(id).value = ''; });
+        document.getElementById('idNome').focus();
+        carregar();
+      } catch (erro) {
+        mostrarMensagem(mensagem, erro.message);
+      }
+    });
+
+    exigirPapel('superadmin').then(async () => {
+      ajustarTurma();
+      campoTurma.innerHTML += (await api('/api/turmas')).map((t) => `<option>${esc(t)}</option>`).join('');
+      carregar();
+    });
+  </script>
+</body>
+</html>

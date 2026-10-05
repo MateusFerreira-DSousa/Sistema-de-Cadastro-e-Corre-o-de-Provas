@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área do Aluno - Sistema de Correção de Provas</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+
+  <header class="dashboard-header">
+    <div class="container header-container">
+      <div class="logo-area">
+        <span class="user-badge user-badge-aluno">Área do Aluno</span>
+      </div>
+      <div class="user-info">
+        <span>Olá, <strong class="nome-usuario"></strong></span>
+        <button type="button" class="btn-logout" onclick="sair()">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- LISTA DE PROVAS DO DIA -->
+    <section id="sec-lista" class="content-area dashboard-section active-section">
+      <h2>Provas de hoje</h2>
+      <p class="section-desc">Só aparecem as provas da sua turma marcadas para hoje.</p>
+      <div id="mensagem-lista" hidden role="status"></div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Prova</th><th>Horário</th><th>Situação</th><th></th></tr>
+        </thead>
+        <tbody id="lista-provas"></tbody>
+      </table>
+    </section>
+
+    <!-- TELA DA PROVA -->
+    <section id="sec-prova" class="content-area dashboard-section">
+      <div class="prova-topo">
+        <h2 id="titulo-prova"></h2>
+        <span class="timer" id="timer" aria-live="off"></span>
+      </div>
+      <p class="section-desc">Marque uma alternativa em cada questão. Ao acabar o tempo, a prova é enviada sozinha.</p>
+
+      <form id="form-respostas">
+        <div id="questoes-prova"></div>
+        <div id="mensagem-prova" hidden role="alert"></div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-salvar" id="botao-enviar">Enviar prova</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const SITUACAO = {
+      aguardando: 'Ainda não começou',
+      aberta: 'Aberta',
+      enviada: 'Enviada ✔',
+      encerrada: 'Encerrada',
+    };
+    let provaAtual = null;
+    let relogio = null;
+
+    async function carregarProvas() {
+      const provas = await api('/api/aluno/provas');
+      document.getElementById('lista-provas').innerHTML = provas.map((p) => `
+        <tr>
+          <td>${esc(p.titulo)}</td>
+          <td>${p.hora_inicio}–${p.hora_fim}</td>
+          <td>${SITUACAO[p.estado]}</td>
+          <td>${p.estado === 'aberta' ? `<button type="button" class="btn btn-sm btn-aluno" onclick="abrirProva(${p.id})">Iniciar</button>` : ''}</td>
+        </tr>`).join('') || '<tr><td colspan="4">Nenhuma prova para hoje.</td></tr>';
+    }
+
+    async function abrirProva(id) {
+      const mensagemLista = document.getElementById('mensagem-lista');
+      let prova;
+      try {
+        prova = await api(`/api/aluno/prova?id=${id}`);
+      } catch (erro) {
+        mostrarMensagem(mensagemLista, erro.message);
+        return carregarProvas();
+      }
+      mostrarMensagem(mensagemLista, '');
+      provaAtual = id;
+      document.getElementById('titulo-prova').textContent = prova.titulo;
+      document.getElementById('questoes-prova').innerHTML = prova.questoes.map((q, i) => `
+        <fieldset class="questao-bloco">
+          <legend>Questão ${i + 1}</legend>
+          <p class="enunciado-prova">${esc(q.enunciado)}</p>
+          ${q.alternativas.map((texto, j) => {
+            const letra = 'ABCDE'[j];
+            return `<label class="opcao-item opcao-aluno">
+              <input type="radio" name="${q.id}" value="${letra}">
+              <span class="letra">${letra})</span> <span>${esc(texto)}</span>
+            </label>`;
+          }).join('')}
+        </fieldset>`).join('');
+      document.getElementById('botao-enviar').disabled = false;
+      mostrarSecao('sec-prova');
+
+      // Contagem regressiva pelo relógio do servidor: adiantar o relógio do PC não muda nada.
+      const diferenca = prova.agora - Date.now();
+      const timer = document.getElementById('timer');
+      clearInterval(relogio);
+      const atualizar = () => {
+        const restante = prova.fim - (Date.now() + diferenca);
+        if (restante <= 0) {
+          clearInterval(relogio);
+          timer.textContent = 'Tempo esgotado';
+          enviarProva(true);
+          return;
+        }
+        const s = Math.floor(restante / 1000);
+        timer.textContent = `⏱ ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+      };
+      atualizar();
+      relogio = setInterval(atualizar, 1000);
+    }
+
+    // ponytail: respostas ficam só na tela até o envio; recarregar a página perde as marcações.
+    // Se isso virar problema, salvar cada clique no servidor (autosave) como no handoff.
+    async function enviarProva(automatico) {
+      const form = document.getElementById('form-respostas');
+      const total = document.querySelectorAll('#questoes-prova .questao-bloco').length;
+      const marcadas = [...form.querySelectorAll('input[type="radio"]:checked')];
+      if (!automatico) {
+        const faltam = total - marcadas.length;
+        const aviso = faltam ? `Ainda faltam ${faltam} questão(ões) sem resposta. ` : '';
+        if (!confirm(`${aviso}Enviar a prova? Depois de enviar não dá para mudar.`)) return;
+      }
+      const botao = document.getElementById('botao-enviar');
+      botao.disabled = true;
+      const mensagem = document.getElementById('mensagem-prova');
+      try {
+        await api('/api/aluno/enviar', {
+          provaId: provaAtual,
+          respostas: Object.fromEntries(marcadas.map((campo) => [campo.name, campo.value])),
+        });
+        clearInterval(relogio);
+        mostrarMensagem(document.getElementById('mensagem-lista'), 'Prova enviada! O professor vai divulgar o resultado.', true);
+        mostrarSecao('sec-lista');
+        carregarProvas();
+      } catch (erro) {
+        mostrarMensagem(mensagem, `${erro.message} Tente enviar de novo.`);
+        botao.disabled = false;
+      }
+    }
+
+    document.getElementById('form-respostas').addEventListener('submit', (evento) => {
+      evento.preventDefault();
+      enviarProva(false);
+    });
+
+    exigirPapel('aluno').then(carregarProvas);
+  </script>
+</body>
+</html>

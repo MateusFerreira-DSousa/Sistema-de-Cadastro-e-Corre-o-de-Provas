@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Professor - MF Provas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-page">
+
+    <!-- CABEÇALHO DO PAINEL -->
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <div class="logo-area">
+                <span class="user-badge">Painel do Professor</span>
+            </div>
+            <div class="user-info">
+                <span>Olá, <strong class="nome-usuario"></strong></span>
+                <a href="admin.html" class="btn-link" id="link-admin" hidden>Administração</a>
+                <button type="button" class="btn-logout" onclick="sair()">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container main-layout">
+        <!-- MENU LATERAL DE OPÇÕES DO PROFESSOR -->
+        <aside class="sidebar-menu">
+            <h3>Menu do Professor</h3>
+            <nav class="menu-nav">
+                <button class="menu-btn active" data-secao="sec-provas" onclick="mostrarSecao('sec-provas')">
+                    📋 Minhas Provas
+                </button>
+                <button class="menu-btn" data-secao="sec-nova-prova" onclick="abrirNovaProva()">
+                    ➕ Nova Prova
+                </button>
+                <button class="menu-btn" data-secao="sec-resultados" onclick="mostrarSecao('sec-resultados')">
+                    📊 Resultados
+                </button>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+
+            <!-- SEÇÃO 1: MINHAS PROVAS -->
+            <section id="sec-provas" class="dashboard-section active-section">
+                <h2>📋 Minhas Provas</h2>
+                <p class="section-desc">Provas cadastradas. O aluno só consegue fazer a prova no dia e no horário marcados.</p>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Título</th><th>Turma</th><th>Data</th><th>Horário</th><th>Questões</th><th>Enviadas</th><th></th></tr>
+                    </thead>
+                    <tbody id="lista-provas"></tbody>
+                </table>
+            </section>
+
+            <!-- SEÇÃO 2: NOVA PROVA -->
+            <section id="sec-nova-prova" class="dashboard-section">
+                <h2 id="titulo-form-prova">➕ Nova Prova</h2>
+                <p class="section-desc">Preencha os dados da prova, as questões e marque a alternativa correta de cada uma (gabarito).</p>
+                <div id="aviso-edicao" class="aviso" hidden>
+                    Alunos já enviaram esta prova. Só o gabarito pode ser alterado; as notas serão recalculadas ao salvar.
+                </div>
+
+                <form id="form-prova" class="form-card">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="idTitulo">Título da prova:</label>
+                            <input type="text" id="idTitulo" name="titulo" placeholder="Ex.: Avaliação Parcial de Matemática" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idTurma">Turma:</label>
+                            <select id="idTurma" name="turma" required>
+                                <option value="">Selecione a turma</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row form-row-3">
+                        <div class="form-group">
+                            <label for="idData">Data:</label>
+                            <input type="date" id="idData" name="data" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idInicio">Início:</label>
+                            <input type="time" id="idInicio" name="hora_inicio" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idFim">Fim:</label>
+                            <input type="time" id="idFim" name="hora_fim" required>
+                        </div>
+                    </div>
+
+                    <div id="questoes"></div>
+
+                    <button type="button" class="btn btn-sm btn-secondary" id="botao-add-questao" onclick="adicionarQuestao()">+ Adicionar questão</button>
+
+                    <div id="mensagem-prova" hidden role="alert"></div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-salvar">Salvar prova</button>
+                        <button type="button" class="btn btn-cancelar" id="botao-cancelar-edicao" onclick="abrirNovaProva(true)" hidden>Cancelar edição</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- SEÇÃO 3: RESULTADOS -->
+            <section id="sec-resultados" class="dashboard-section">
+                <h2>📊 Resultados</h2>
+                <p class="section-desc">Notas dos alunos da turma da prova. A correção é automática.</p>
+
+                <div class="form-group">
+                    <label for="selectProva">Selecione a prova:</label>
+                    <select id="selectProva" onchange="carregarResultados(this.value)"></select>
+                </div>
+
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h4>Média da turma</h4>
+                        <span class="stat-number" id="media">—</span>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Provas enviadas</h4>
+                        <span class="stat-number" id="enviadas">—</span>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Aluno</th><th>Situação</th><th>Nota</th></tr>
+                    </thead>
+                    <tbody id="lista-resultados"></tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let provas = [];
+
+        async function carregarProvas() {
+            provas = await api('/api/provas');
+            document.getElementById('lista-provas').innerHTML = provas.map((p) => `
+                <tr>
+                    <td>${esc(p.titulo)}</td>
+                    <td>${esc(p.turma)}</td>
+                    <td>${dataBr(p.data)}</td>
+                    <td>${p.hora_inicio}–${p.hora_fim}</td>
+                    <td>${p.total_questoes}</td>
+                    <td>${p.enviadas}</td>
+                    <td class="acoes">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="editarProva(${p.id})">Editar</button>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="verResultados(${p.id})">Resultados</button>
+                        <button type="button" class="btn btn-sm btn-perigo" onclick="excluirProva(${p.id})">Excluir</button>
+                    </td>
+                </tr>`).join('') || '<tr><td colspan="7">Nenhuma prova cadastrada ainda.</td></tr>';
+
+            document.getElementById('selectProva').innerHTML = provas.map((p) =>
+                `<option value="${p.id}">${esc(p.titulo)} — ${esc(p.turma)} (${dataBr(p.data)})</option>`).join('');
+        }
+
+        async function excluirProva(id) {
+            const prova = provas.find((p) => p.id === id);
+            if (!confirm(`Excluir a prova "${prova.titulo}"? As respostas e notas dos alunos também serão apagadas.`)) return;
+            try {
+                await api('/api/provas/excluir', { id });
+                carregarProvas();
+            } catch (erro) {
+                alert(erro.message);
+            }
+        }
+
+        function verResultados(id) {
+            document.getElementById('selectProva').value = id;
+            carregarResultados(id);
+            mostrarSecao('sec-resultados');
+        }
+
+        async function carregarResultados(id) {
+            if (!id) return;
+            const { alunos } = await api(`/api/resultados?prova=${id}`);
+            const enviadas = alunos.filter((a) => a.enviada_em);
+            const media = enviadas.reduce((soma, a) => soma + a.nota, 0) / enviadas.length;
+            document.getElementById('media').textContent = enviadas.length ? media.toFixed(1) : '—';
+            document.getElementById('enviadas').textContent = `${enviadas.length} de ${alunos.length}`;
+            document.getElementById('lista-resultados').innerHTML = alunos.map((a) => `
+                <tr>
+                    <td>${esc(a.nome)}</td>
+                    <td>${a.enviada_em ? 'Enviada' : 'Não enviou'}</td>
+                    <td>${a.enviada_em ? `<span class="nota ${a.nota >= 6 ? 'nota-alta' : 'nota-baixa'}">${a.nota.toFixed(1)}</span>` : '—'}</td>
+                </tr>`).join('') || '<tr><td colspan="3">Nenhum aluno cadastrado nessa turma.</td></tr>';
+        }
+
+        // ---------- Formulário de nova prova ----------
+        let contadorQuestoes = 0;
+
+        // Sem argumento cria questão em branco; com questão (vinda da edição) já preenche.
+        function adicionarQuestao(questao) {
+            const n = ++contadorQuestoes; // só para nomes únicos dos radios
+            const bloco = document.createElement('fieldset');
+            bloco.className = 'questao-bloco';
+            if (questao) bloco.dataset.id = questao.id;
+            bloco.innerHTML = `
+                <legend></legend>
+                <div class="form-group">
+                    <textarea class="enunciado" rows="3" placeholder="Enunciado da questão" aria-label="Enunciado" required></textarea>
+                </div>
+                <p class="help-text">Marque a bolinha da alternativa correta.</p>
+                ${['A', 'B', 'C', 'D', 'E'].map((letra) => `
+                    <div class="opcao-item">
+                        <input type="radio" name="correta-${n}" value="${letra}" aria-label="${letra} é a correta" required>
+                        <span class="letra">${letra})</span>
+                        <input type="text" class="form-control alternativa" placeholder="Texto da alternativa ${letra}" aria-label="Alternativa ${letra}" required>
+                    </div>`).join('')}
+                <button type="button" class="btn btn-sm btn-perigo botao-remover" onclick="this.closest('fieldset').remove(); numerarQuestoes()">Remover questão</button>`;
+            if (questao) {
+                bloco.querySelector('.enunciado').value = questao.enunciado;
+                bloco.querySelectorAll('.alternativa').forEach((campo, i) => { campo.value = questao.alternativas[i]; });
+                bloco.querySelector(`input[value="${questao.correta}"]`).checked = true;
+            }
+            document.getElementById('questoes').append(bloco);
+            numerarQuestoes();
+        }
+
+        function numerarQuestoes() {
+            document.querySelectorAll('.questao-bloco legend').forEach((legenda, i) => { legenda.textContent = `Questão ${i + 1}`; });
+        }
+
+        const formProva = document.getElementById('form-prova');
+        let provaEditando = null; // id da prova em edição; null = criando nova
+
+        // Volta o formulário para "Nova Prova". Só limpa se estava editando (ou se pedido),
+        // para não apagar uma prova nova que o professor ainda está digitando.
+        function abrirNovaProva(limpar = false) {
+            if (provaEditando || limpar) {
+                provaEditando = null;
+                formProva.reset();
+                formProva.querySelectorAll('input, select, textarea').forEach((campo) => { campo.disabled = false; });
+                document.getElementById('questoes').innerHTML = '';
+                adicionarQuestao();
+                ajustarModoEdicao(false, false);
+            }
+            mostrarMensagem(document.getElementById('mensagem-prova'), '');
+            mostrarSecao('sec-nova-prova');
+        }
+
+        function ajustarModoEdicao(editando, soGabarito) {
+            document.getElementById('titulo-form-prova').textContent = editando ? '✏️ Editar Prova' : '➕ Nova Prova';
+            document.getElementById('botao-cancelar-edicao').hidden = !editando;
+            document.getElementById('aviso-edicao').hidden = !soGabarito;
+            document.getElementById('botao-add-questao').hidden = soGabarito;
+            document.querySelectorAll('.botao-remover').forEach((botao) => { botao.hidden = soGabarito; });
+        }
+
+        async function editarProva(id) {
+            let prova;
+            try {
+                prova = await api(`/api/prova?id=${id}`);
+            } catch (erro) {
+                return alert(erro.message);
+            }
+            provaEditando = id;
+            for (const campo of ['titulo', 'turma', 'data', 'hora_inicio', 'hora_fim']) formProva.elements[campo].value = prova[campo];
+            document.getElementById('questoes').innerHTML = '';
+            prova.questoes.forEach(adicionarQuestao);
+            const soGabarito = prova.enviadas > 0;
+            // Com envios, trava tudo menos as bolinhas do gabarito.
+            formProva.querySelectorAll('input, select, textarea').forEach((campo) => {
+                campo.disabled = soGabarito && campo.type !== 'radio';
+            });
+            ajustarModoEdicao(true, soGabarito);
+            mostrarMensagem(document.getElementById('mensagem-prova'), '');
+            mostrarSecao('sec-nova-prova');
+        }
+
+        formProva.addEventListener('submit', async (evento) => {
+            evento.preventDefault();
+            const mensagem = document.getElementById('mensagem-prova');
+            const prova = Object.fromEntries(['titulo', 'turma', 'data', 'hora_inicio', 'hora_fim'].map((campo) => [campo, formProva.elements[campo].value]));
+            prova.questoes = [...document.querySelectorAll('.questao-bloco')].map((bloco) => ({
+                enunciado: bloco.querySelector('.enunciado').value,
+                alternativas: [...bloco.querySelectorAll('.alternativa')].map((campo) => campo.value),
+                correta: bloco.querySelector('input[type="radio"]:checked')?.value,
+                id: Number(bloco.dataset.id) || undefined,
+            }));
+            try {
+                if (provaEditando) {
+                    const { soGabarito } = await api('/api/provas/editar', { id: provaEditando, ...prova });
+                    abrirNovaProva(true);
+                    mostrarMensagem(mensagem, soGabarito
+                        ? 'Gabarito atualizado e notas recalculadas. (Como alunos já enviaram, só o gabarito foi alterado.)'
+                        : 'Prova atualizada com sucesso.', true);
+                } else {
+                    await api('/api/provas', prova);
+                    abrirNovaProva(true);
+                    mostrarMensagem(mensagem, 'Prova salva com sucesso.', true);
+                }
+                carregarProvas();
+            } catch (erro) {
+                mostrarMensagem(mensagem, erro.message);
+            }
+        });
+
+        exigirPapel('professor', 'superadmin').then(async (eu) => {
+            document.getElementById('link-admin').hidden = eu.role !== 'superadmin';
+            adicionarQuestao();
+            const turmas = await api('/api/turmas');
+            document.getElementById('idTurma').innerHTML += turmas.map((t) => `<option>${esc(t)}</option>`).join('');
+            await carregarProvas();
+            carregarResultados(document.getElementById('selectProva').value);
+        });
+    </script>
+</body>
+</html>
