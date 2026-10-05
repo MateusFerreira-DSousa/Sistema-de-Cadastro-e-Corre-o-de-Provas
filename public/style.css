@@ -775,3 +775,42 @@ button.btn-logout {
     grid-template-columns: 1fr;
   }
 }
+
+/* PÁGINA DE IMPRESSÃO (imprimir.html) */
+.barra-impressao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.barra-impressao .checkbox-group {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.folha {
+  max-width: 800px;
+  margin: 0 auto 40px;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body.dashboard-page {
+    background: #fff;
+  }
+
+  .container {
+    max-width: none;
+    padding: 0;
+  }
+
+  .folha.content-area {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+}

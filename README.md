@@ -9,7 +9,7 @@ Esta versão é o **MVP**. O front-end é HTML/CSS/JS estático e o backend é u
 | Papel | O que faz |
 |-------|-----------|
 | `superadmin` | Cadastra e exclui professores e alunos. Também acessa o painel do professor e vê as provas de todos. É criado automaticamente na primeira execução. |
-| `professor` | Cria, edita e exclui as **próprias** provas, com gabarito, e vê os resultados da turma. |
+| `professor` | Cria, edita e exclui as **próprias** provas, com gabarito, vê os resultados da turma e imprime a prova (PDF/Word). |
 | `aluno` | Faz as provas da **sua turma**, no dia e no horário marcados, uma vez só. Não vê a nota. |
 
 ## Como rodar
@@ -54,6 +54,7 @@ public/            tudo que o navegador recebe
   admin.html       superadmin: cadastro de professores e alunos
   acessoprof.html  professor: minhas provas, nova/editar prova, resultados
   aluno.html       aluno: provas de hoje e tela da prova (com timer)
+  imprimir.html    professor: versão para imprimir, salvar em PDF ou baixar Word
   script.js        funções compartilhadas (api, exigirPapel, sair, esc...)
   style.css        estilos de todas as páginas
 ```
@@ -182,6 +183,16 @@ Para ver os dados: `sqlite3 data/provas.db` (ou qualquer visualizador de SQLite)
 
 **Nova página**: crie o `.html` em `public/` copiando o cabeçalho de uma página existente, inclua `<script src="script.js"></script>` e comece o script com `exigirPapel(...)`.
 
+## Imprimir prova (PDF / Word)
+
+Em **Minhas Provas**, o botão **Imprimir** abre `imprimir.html?id=...` numa aba nova, com a prova em formato de folha: cabeçalho com escola, aluno, turma e data, e as questões numeradas com (A)–(E). Lá:
+
+- **Imprimir / Salvar em PDF** usa a impressão do navegador. Para gerar PDF, escolha "Salvar como PDF" no destino.
+- **Baixar Word** gera um `.doc` no próprio navegador, sem passar pelo servidor.
+- **Incluir folha de gabarito** acrescenta uma página final com as respostas, para o professor corrigir.
+
+A página usa a mesma rota `GET /api/prova`, então o professor só imprime as próprias provas. O estilo da folha fica num `<style id="estilo-folha">` dentro do `imprimir.html`, porque esse mesmo CSS vai junto no arquivo Word.
+
 ## Backup
 
 Pare o servidor e copie a pasta `data/` inteira. O banco usa WAL, e copiar só o `.db` com o servidor rodando pode perder dados. Com o servidor rodando, use `sqlite3 data/provas.db ".backup 'backup.db'"`.
@@ -194,6 +205,7 @@ Pare o servidor e copie a pasta `data/` inteira. O banco usa WAL, e copiar só o
 - **Sem HTTPS**: se houver, ative `Secure` no cookie.
 - **Sem migrações** de banco.
 - A fonte Inter vem do Google Fonts. Sem internet, as páginas usam a fonte padrão do navegador.
-- Fora do escopo: descritores, gerar PDF/Word, embaralhar questões, feedback ao aluno, recuperação de senha.
+- O Word é gerado como `.doc` (HTML que o Word abre). O Word pode avisar que o formato não bate com a extensão; é só confirmar. Gerar `.docx` de verdade exigiria uma biblioteca.
+- Fora do escopo: descritores, embaralhar questões, feedback ao aluno, recuperação de senha.
 
 Atalhos deliberados no código estão marcados com comentários `ponytail:`, que explicam o limite e como evoluir.

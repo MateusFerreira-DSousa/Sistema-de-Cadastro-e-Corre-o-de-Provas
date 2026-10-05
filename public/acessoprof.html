@@ -156,6 +156,7 @@
                     <td class="acoes">
                         <button type="button" class="btn btn-sm btn-secondary" onclick="editarProva(${p.id})">Editar</button>
                         <button type="button" class="btn btn-sm btn-secondary" onclick="verResultados(${p.id})">Resultados</button>
+                        <a class="btn btn-sm btn-secondary" href="imprimir.html?id=${p.id}" target="_blank">Imprimir</a>
                         <button type="button" class="btn btn-sm btn-perigo" onclick="excluirProva(${p.id})">Excluir</button>
                     </td>
                 </tr>`).join('') || '<tr><td colspan="7">Nenhuma prova cadastrada ainda.</td></tr>';

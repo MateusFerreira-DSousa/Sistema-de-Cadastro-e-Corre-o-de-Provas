@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imprimir Prova - Sistema de Correção de Provas</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Estilo da folha da prova. Também vai junto no arquivo Word, por isso fica separado do style.css. -->
+  <style id="estilo-folha">
+    .folha { font-family: Arial, sans-serif; font-size: 12pt; color: #000; line-height: 1.4; }
+    .folha h1 { font-size: 16pt; text-align: center; margin: 0 0 12pt; }
+    .folha .cabecalho { width: 100%; border-collapse: collapse; margin-bottom: 18pt; }
+    .folha .cabecalho td { border: 1px solid #000; padding: 6pt; font-size: 11pt; }
+    .folha .questao { margin-bottom: 14pt; page-break-inside: avoid; }
+    .folha .enunciado { margin: 0 0 6pt; white-space: pre-wrap; }
+    .folha .alternativa { margin: 0 0 3pt 18pt; }
+    .folha .gabarito { page-break-before: always; }
+    .folha .gabarito h2 { font-size: 14pt; margin: 0 0 10pt; }
+  </style>
+</head>
+<body class="dashboard-page">
+
+  <header class="dashboard-header no-print">
+    <div class="container header-container">
+      <div class="logo-area">
+        <a href="acessoprof.html" class="btn-link">&larr; Voltar ao painel</a>
+      </div>
+      <div class="barra-impressao">
+        <label class="checkbox-group">
+          <input type="checkbox" id="incluirGabarito"> Incluir folha de gabarito
+        </label>
+        <button type="button" class="btn btn-sm btn-professor" onclick="window.print()">🖨️ Imprimir / Salvar em PDF</button>
+        <button type="button" class="btn btn-sm btn-secondary" onclick="baixarWord()">📄 Baixar Word</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="mensagem" hidden role="alert"></div>
+    <article class="content-area folha" id="folha"></article>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const folha = document.getElementById('folha');
+    const campoGabarito = document.getElementById('incluirGabarito');
+    let prova = null;
+
+    function montarFolha() {
+      const questoes = prova.questoes.map((q, i) => `
+        <div class="questao">
+          <p class="enunciado"><strong>${i + 1}.</strong> ${esc(q.enunciado)}</p>
+          ${q.alternativas.map((alt, j) => `<p class="alternativa">(${'ABCDE'[j]}) ${esc(alt)}</p>`).join('')}
+        </div>`).join('');
+
+      const gabarito = campoGabarito.checked ? `
+        <div class="gabarito">
+          <h2>Gabarito — ${esc(prova.titulo)} (${esc(prova.turma)})</h2>
+          ${prova.questoes.map((q, i) => `<p>${i + 1}. ${q.correta}</p>`).join('')}
+        </div>` : '';
+
+      folha.innerHTML = `
+        <h1>${esc(prova.titulo)}</h1>
+        <table class="cabecalho">
+          <tr><td colspan="2">Escola:</td></tr>
+          <tr><td colspan="2">Aluno(a):</td></tr>
+          <tr><td>Turma: ${esc(prova.turma)}</td><td>Data: ${dataBr(prova.data)}</td></tr>
+        </table>
+        ${questoes}
+        ${gabarito}`;
+    }
+
+    // Word abre HTML salvo como .doc; assim não precisa de biblioteca para gerar .docx.
+    // ponytail: o Word pode avisar que o formato não bate com a extensão; é só confirmar. Se incomodar, gerar .docx de verdade.
+    function baixarWord() {
+      const css = document.getElementById('estilo-folha').textContent;
+      const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+        <head><meta charset="utf-8"><title>${esc(prova.titulo)}</title><style>${css}</style></head>
+        <body><div class="folha">${folha.innerHTML}</div></body></html>`;
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(new Blob(['\ufeff', html], { type: 'application/msword' }));
+      link.download = `${prova.titulo.replace(/[\\/:*?"<>|]/g, '').trim() || 'prova'}.doc`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000); // revogar na hora pode cancelar o download
+    }
+
+    campoGabarito.addEventListener('change', montarFolha);
+
+    exigirPapel('professor', 'superadmin').then(async () => {
+      try {
+        prova = await api(`/api/prova?id=${new URLSearchParams(location.search).get('id')}`);
+        document.title = `${prova.titulo} - Imprimir`;
+        montarFolha();
+      } catch (erro) {
+        mostrarMensagem(document.getElementById('mensagem'), erro.message);
+      }
+    });
+  </script>
+</body>
+</html>
