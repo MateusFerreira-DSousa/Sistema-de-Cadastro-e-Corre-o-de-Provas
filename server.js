@@ -210,6 +210,21 @@ const rotas = {
     fn: ({ usuario }) => usuario,
   },
 
+  'POST /api/senha/alterar': {
+    roles: ['superadmin', 'professor', 'aluno'],
+    fn({ corpo, usuario }) {
+      const { atual, nova } = corpo;
+      if (typeof atual !== 'string' || atual.length > 1024 || typeof nova !== 'string' || nova.length < 8 || nova.length > 128) falha(400, 'Informe a senha atual e uma nova senha de 8 a 128 caracteres.');
+      const conta = db.prepare('SELECT senha_hash FROM users WHERE id = ?').get(usuario.id);
+      if (!senhaConfere(atual, conta.senha_hash)) falha(400, 'Senha atual incorreta.');
+      if (atual === nova) falha(400, 'Escolha uma senha diferente da atual.');
+      transacao(() => {
+        db.prepare('UPDATE users SET senha_hash = ? WHERE id = ?').run(gerarHash(nova), usuario.id);
+        db.prepare('DELETE FROM sessions WHERE user_id = ?').run(usuario.id);
+      });
+    },
+  },
+
   // --- Superadmin: cadastro de professores e alunos ---
   'GET /api/usuarios': {
     roles: ['superadmin'],

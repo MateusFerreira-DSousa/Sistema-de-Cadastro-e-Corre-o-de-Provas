@@ -1,57 +1,201 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Entrar - Sistema de Correção de Provas</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Entrar - Apta</title>
+
+    <!-- CSS principal do sistema -->
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <!-- Fonte Inter -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 </head>
 <body class="auth-page">
 
-  <main class="auth-container">
-    <form class="auth-card" id="form-login">
-      <fieldset>
-        <legend>Entre para acessar o sistema de correção de provas</legend>
+    <!-- =========================================
+         ÁREA PRINCIPAL DA TELA DE LOGIN
+         ========================================= -->
+    <main class="auth-shell">
 
-        <div class="form-group">
-          <label for="idLogin">Login:</label>
-          <input type="text" name="login" id="idLogin" autocomplete="username" required autofocus>
-        </div>
+        <!-- =========================================
+             COLUNA ESQUERDA / IDENTIDADE VISUAL
+             ========================================= -->
+        <section class="auth-brand-panel">
+            <div class="auth-brand-badge">
+                Plataforma educacional
+            </div>
 
-        <div class="form-group">
-          <label for="idSenha">Senha:</label>
-          <input type="password" name="senha" id="idSenha" autocomplete="current-password" required>
-        </div>
+            <div class="auth-brand-logo">
+                <span class="auth-brand-logo-mark">A</span>
+                <span class="auth-brand-logo-text">apta.</span>
+            </div>
 
-        <div id="mensagem" class="error-message" hidden role="alert"></div>
+            <h1 class="auth-brand-title">
+                Acesse sua conta e entre no ambiente de avaliações.
+            </h1>
 
-        <div class="form-actions">
-          <button type="submit" class="btn btn-salvar">Entrar</button>
-        </div>
+            <p class="auth-brand-description">
+                Professores criam avaliações, acompanham resultados e
+                alunos realizam suas provas em um ambiente simples,
+                organizado e moderno.
+            </p>
 
-        <p class="auth-links">
-          Não tem acesso? Peça seu login ao administrador da escola.<br>
-          <a href="index.html">&larr; Voltar ao início</a>
-        </p>
-      </fieldset>
-    </form>
-  </main>
+            <ul class="auth-brand-list">
+                <li>Login único para professor, aluno e administrador</li>
+                <li>Correção automática e acompanhamento escolar</li>
+                <li>Interface rápida, leve e fácil de usar</li>
+            </ul>
+        </section>
 
-  <script src="script.js"></script>
-  <script>
-    document.getElementById('form-login').addEventListener('submit', async (evento) => {
-      evento.preventDefault();
-      const mensagem = document.getElementById('mensagem');
-      try {
-        const { role } = await api('/api/login', Object.fromEntries(new FormData(evento.target)));
-        location.href = PAGINA_INICIAL[role];
-      } catch (erro) {
-        mostrarMensagem(mensagem, erro.message);
-      }
-    });
-  </script>
+        <!-- =========================================
+             COLUNA DIREITA / FORMULÁRIO DE LOGIN
+             ========================================= -->
+        <section class="auth-form-panel">
+            <form
+                class="auth-card auth-card-modern"
+                id="form-login"
+            >
+                <fieldset>
+                    <legend class="auth-legend-modern">
+                        Entrar no sistema
+                    </legend>
+
+                    <p class="auth-subtitle">
+                        Use suas credenciais para acessar o Apta.
+                    </p>
+
+                    <!-- Campo de login -->
+                    <div class="form-group">
+                        <label for="idLogin">Login</label>
+
+                        <input
+                            type="text"
+                            name="login"
+                            id="idLogin"
+                            autocomplete="username"
+                            required
+                            autofocus
+                            placeholder="Digite seu login"
+                        >
+                    </div>
+
+                    <!-- Campo de senha -->
+                    <div class="form-group">
+                        <label for="idSenha">Senha</label>
+
+                        <input
+                            type="password"
+                            name="senha"
+                            id="idSenha"
+                            autocomplete="current-password"
+                            required
+                            placeholder="Digite sua senha"
+                        >
+                    </div>
+
+                    <!-- Mostrar senha -->
+                    <div class="auth-options">
+                        <label class="checkbox-inline">
+                            <input
+                                type="checkbox"
+                                id="mostrarSenha"
+                            >
+                            <span>Mostrar senha</span>
+                        </label>
+                    </div>
+
+                    <!-- Mensagem de erro -->
+                    <div
+                        id="mensagem"
+                        class="error-message"
+                        hidden
+                        role="alert"
+                    ></div>
+
+                    <!-- Botão de envio -->
+                    <div class="form-actions">
+                        <button
+                            type="submit"
+                            class="btn btn-salvar btn-login-modern"
+                        >
+                            Entrar
+                        </button>
+                    </div>
+
+                    <!-- Links auxiliares -->
+                    <div class="auth-footer-links">
+                        <p>
+                            Não tem acesso? Peça seu login ao administrador da escola.
+                        </p>
+
+                        <a href="index.html">
+                            &larr; Voltar ao início
+                        </a>
+                    </div>
+                </fieldset>
+            </form>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+
+    <script>
+        /* =========================================
+           MOSTRAR / OCULTAR A SENHA
+           ========================================= */
+        document
+            .getElementById('mostrarSenha')
+            .addEventListener('change', (evento) => {
+                const campoSenha = document.getElementById('idSenha');
+
+                campoSenha.type = evento.target.checked
+                    ? 'text'
+                    : 'password';
+            });
+
+        /* =========================================
+           ENVIO DO FORMULÁRIO DE LOGIN
+           Mantém a lógica original do sistema
+           ========================================= */
+        document
+            .getElementById('form-login')
+            .addEventListener('submit', async (evento) => {
+                evento.preventDefault();
+
+                const mensagem = document.getElementById('mensagem');
+
+                try {
+                    const dadosFormulario = Object.fromEntries(
+                        new FormData(evento.target)
+                    );
+
+                    const { role } = await api('/api/login', dadosFormulario);
+
+                    location.href = PAGINA_INICIAL[role];
+                } catch (erro) {
+                    mostrarMensagem(mensagem, erro.message);
+                }
+            });
+    </script>
 </body>
 </html>
