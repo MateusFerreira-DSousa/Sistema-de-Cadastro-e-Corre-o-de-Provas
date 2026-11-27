@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudante - Apta</title>
+    <link rel="stylesheet" href="/compartilhado/style.css">
+    <link rel="stylesheet" href="/pasta_aluno/aluno.css">
+    <!-- Estilo compartilhado dos seletores do Apta -->
+    <link rel="stylesheet" href="/compartilhado/select.css">
+</head>
+<body class="apta-aluno">
+    <!-- Menu de navegação do estudante. -->
+    <aside class="aluno-sidebar">
+        <a href="/pasta_aluno/aluno.html" class="aluno-marca"><span>A</span> apta.</a>
+        <p class="aluno-rotulo">ÁREA DO ESTUDANTE</p>
+        <button type="button" class="aluno-menu ativo" id="menu-avaliacoes">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+            Minhas avaliações
+        </button>
+        <p class="aluno-rotulo">CONTA</p>
+        <button type="button" class="aluno-menu aluno-sair" id="botao-sair">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H4v16h6M9 12h11m-4-4 4 4-4 4"/></svg>
+            Sair
+        </button>
+    </aside>
+    <!-- Cabeçalho com identificação da turma e da sessão. -->
+    <header class="aluno-header">
+        <span>Estudante / Avaliações</span>
+        <div class="aluno-perfil">
+            <span class="aluno-avatar" id="avatar-aluno">E</span>
+            <div><strong class="nome-usuario"></strong><small id="turma-aluno"></small></div>
+        </div>
+    </header>
+    <main class="aluno-layout">
+        <!-- Lista, indicadores e filtros das avaliações. -->
+        <section id="sec-lista" class="dashboard-section active-section">
+            <div class="aluno-intro">
+                <p class="aluno-rotulo">PORTAL DO ESTUDANTE</p>
+                <h1>Minhas avaliações</h1>
+                <p>Consulte as provas da sua turma e acompanhe os horários de aplicação.</p>
+            </div>
+            <div class="aluno-indicadores">
+                <article><span>Agendadas</span><strong id="total-agendadas">—</strong></article>
+                <article><span>Disponíveis agora</span><strong id="total-abertas">—</strong></article>
+                <article><span>Enviadas</span><strong id="total-enviadas">—</strong></article>
+            </div>
+            <div class="aluno-painel">
+                <div class="aluno-filtros">
+                    <h2>Avaliações da turma</h2>
+                    <label for="filtro-avaliacoes" class="aluno-sr">Filtrar situação</label>
+                    <select id="filtro-avaliacoes">
+                        <option value="todas">Todas as avaliações</option>
+                        <option value="aguardando">Agendadas</option>
+                        <option value="aberta">Disponíveis</option>
+                        <option value="enviada">Enviadas</option>
+                        <option value="encerrada">Encerradas</option>
+                        <option value="cancelada">Canceladas</option>
+                    </select>
+                </div>
+                <div id="mensagem-lista" hidden role="status"></div>
+                <div id="lista-provas" class="aluno-lista" aria-live="polite">Carregando avaliações...</div>
+            </div>
+        </section>
+        <!-- Realização da prova: os controles originais continuam disponíveis. -->
+        <section id="sec-prova" class="dashboard-section aluno-painel">
+            <div class="prova-topo">
+                <h1 id="titulo-prova"></h1>
+                <span class="timer" id="timer" aria-live="off"></span>
+            </div>
+            <p class="section-desc">Marque uma alternativa por questão. A prova será enviada automaticamente ao fim do tempo.</p>
+            <!-- Aviso de foco durante a avaliação. -->
+            <div id="aviso-protecao" class="aviso-protecao" role="status">
+                A prova será cancelada após 3 saídas ou mais de 10 segundos fora da tela. Saídas detectadas: <strong id="total-saidas">0</strong>.
+                <button type="button" id="botao-tela-cheia">Tela cheia</button>
+            </div>
+            <form id="form-respostas">
+                <div id="questoes-prova"></div>
+                <div id="mensagem-prova" hidden role="alert"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-salvar" id="botao-enviar">Enviar prova</button>
+                </div>
+            </form>
+        </section>
+    </main>
+    <!-- Modal compartilhado pelas confirmações da avaliação. -->
+    <dialog id="modal-avaliacao" class="modal-avaliacao" aria-labelledby="modal-titulo">
+        <div class="modal-simbolo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 13l3 3 5-6"/></svg>
+        </div>
+        <h2 id="modal-titulo"></h2>
+        <p id="modal-texto"></p>
+        <div id="modal-progresso" hidden>
+            <p id="modal-contagem"></p>
+            <progress id="modal-barra" max="1" value="0"></progress>
+            <p id="modal-pendentes"></p>
+        </div>
+        <div class="modal-acoes">
+            <button type="button" id="modal-cancelar">Continuar prova</button>
+            <button type="button" id="modal-confirmar">Enviar prova</button>
+        </div>
+    </dialog>
+    <script src="/compartilhado/script.js"></script>
+    <script src="/pasta_aluno/aluno.js"></script>
+</body>
+</html>

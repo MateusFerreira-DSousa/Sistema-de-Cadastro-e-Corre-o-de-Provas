@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração | Apta</title>
+    <link rel="stylesheet" href="/pasta_admin/admin.css">
+    <script src="/compartilhado/script.js" defer></script>
+    <script src="/pasta_admin/admin.js" defer></script>
+    <!-- Estilo compartilhado dos seletores do Apta -->
+    <link rel="stylesheet" href="/compartilhado/select.css">
+</head>
+<body class="admin-page">
+    <!-- Menu lateral de navegação administrativa -->
+    <aside class="sidebar">
+        <a class="brand" href="/pasta_admin/admin.html"><span class="brand-mark">A</span> <strong>apta<span class="accent">.</span></strong></a>
+        <p class="sidebar-label">GERENCIAMENTO</p>
+        <nav aria-label="Menu administrativo">
+            <a href="#visao-geral" class="nav-link active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Visão geral</a>
+            <a href="#usuarios" class="nav-link"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2M17 4a4 4 0 0 1 0 8m2 3a6 6 0 0 1 3 5"/></svg>Usuários</a>
+            <a href="#cadastro" class="nav-link"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2m3-13v8m-4-4h8"/></svg>Novo cadastro</a>
+            <a href="/pasta_provas/acessoprof.html" class="nav-link"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7m-7 4h7"/></svg>Provas</a>
+        </nav>
+        <p class="sidebar-label">CONTA</p>
+        <nav aria-label="Configurações da conta">
+            <a href="/pasta_senha/senha.html" class="nav-link"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Alterar senha</a>
+            <button id="sair" class="nav-link logout" type="button"><svg viewBox="0 0 24 24"><path d="M10 3H4v18h6m5-14 5 5-5 5m5-5H9"/></svg>Sair</button>
+        </nav>
+        <div class="sidebar-footer">Apta · Gestão educacional</div>
+    </aside>
+
+    <!-- Conteúdo principal e indicadores derivados dos usuários cadastrados -->
+    <div class="workspace">
+        <header class="topbar">
+            <span>Administração <span class="muted">/ Painel</span></span>
+            <div class="profile"><span class="avatar" aria-hidden="true">AD</span><div><strong class="nome-usuario">Administrador</strong><small>Administrador</small></div></div>
+        </header>
+        <main class="content" id="visao-geral">
+            <div class="page-heading">
+                <div><p class="eyebrow">PAINEL ADMINISTRATIVO</p><h1>Visão geral</h1><p class="muted">Gerencie os acessos e usuários da sua instituição.</p></div>
+                <a href="#cadastro" class="primary">+ Novo usuário</a>
+            </div>
+            <div class="stats" aria-label="Indicadores de usuários">
+                <article class="stat"><span>Usuários cadastrados</span><strong id="total-usuarios">—</strong><small>Professores e estudantes</small></article>
+                <article class="stat"><span>Professores</span><strong id="total-professores">—</strong><small>Contas de docentes</small></article>
+                <article class="stat"><span>Estudantes</span><strong id="total-alunos">—</strong><small>Contas de estudantes</small></article>
+            </div>
+            <!-- Lista de usuários com pesquisa e filtro por perfil -->
+            <section class="panel" id="usuarios">
+                <div class="panel-heading"><div><h2>Usuários cadastrados</h2><p class="muted">Consulte professores e estudantes.</p></div><span id="contagem" class="count"></span></div>
+                <div class="filters">
+                    <input id="busca" type="search" aria-label="Pesquisar usuários" placeholder="Pesquisar nome ou login...">
+                    <select id="filtro" aria-label="Filtrar por perfil"><option value="">Todos os perfis</option><option value="professor">Professor</option><option value="aluno">Estudante</option></select>
+                </div>
+                <p id="erro-lista" role="alert" hidden></p>
+                <div class="table-scroll"><table><thead><tr><th>Nome</th><th>Login / e-mail</th><th>Perfil</th><th>Turma</th><th>Ações</th></tr></thead><tbody id="lista-usuarios"><tr><td colspan="5">Carregando usuários...</td></tr></tbody></table></div>
+            </section>
+            <!-- Cadastro mantém os campos e regras originais da API -->
+            <section class="panel" id="cadastro">
+                <div class="panel-heading"><div><h2>Novo usuário</h2><p class="muted">Cadastre um professor ou estudante.</p></div></div>
+                <form id="form-usuario">
+                    <div class="form-grid">
+                        <div class="field"><label for="idRole">Perfil</label><select id="idRole" name="role"><option value="aluno">Estudante</option><option value="professor">Professor</option></select></div>
+                        <div class="field" id="grupo-turma"><label for="idTurma">Turma</label><select id="idTurma" name="turma" required><option value="">Selecione a turma</option></select></div>
+                        <div class="field full"><label for="idNome">Nome completo</label><input id="idNome" name="nome" required placeholder="Nome do usuário"></div>
+                        <div class="field"><label for="idLogin">Login / e-mail</label><input id="idLogin" name="login" autocomplete="off" required placeholder="Identificação de acesso"></div>
+                        <div class="field"><label for="idSenha">Senha</label><input type="password" id="idSenha" name="senha" minlength="8" autocomplete="new-password" required placeholder="Mínimo de 8 caracteres"><label class="check"><input id="mostrar-senha" type="checkbox"> Mostrar senha</label></div>
+                    </div>
+                    <div id="mensagem" hidden role="alert"></div>
+                    <div class="actions"><button class="primary" type="submit">Cadastrar usuário</button></div>
+                </form>
+            </section>
+            <footer>© 2026 Apta · Avaliar para evoluir.</footer>
+        </main>
+    </div>
+    <!-- Janela de edição das credenciais de professores e estudantes -->
+    <dialog id="dialog-credenciais" class="dialog-credenciais" aria-labelledby="titulo-credenciais">
+        <form id="form-credenciais">
+            <header class="credenciais-topo">
+                <div>
+                    <h2 id="titulo-credenciais">Editar credenciais</h2>
+                    <p id="usuario-credenciais" class="muted"></p>
+                </div>
+                <button type="button" id="fechar-credenciais" class="credenciais-fechar" aria-label="Fechar">×</button>
+            </header>
+            <div class="field">
+                <label for="editar-login">Login / e-mail</label>
+                <input id="editar-login" required maxlength="254" autocomplete="off">
+            </div>
+            <div class="field">
+                <label for="editar-senha">Nova senha</label>
+                <input id="editar-senha" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="Deixe vazio para manter a senha">
+            </div>
+            <div class="field">
+                <label for="confirmar-edicao">Confirmar nova senha</label>
+                <input id="confirmar-edicao" type="password" maxlength="128" autocomplete="new-password" placeholder="Repita a nova senha">
+            </div>
+            <label class="check">
+                <input id="mostrar-edicao" type="checkbox">
+                Mostrar senhas
+            </label>
+            <p class="muted">Ao alterar as credenciais, as sessões abertas desse usuário serão encerradas.</p>
+            <div id="erro-credenciais" role="alert" hidden></div>
+            <div class="credenciais-acoes">
+                <button type="button" id="cancelar-credenciais" class="editar-credenciais">Cancelar</button>
+                <button type="submit" class="primary">Salvar alterações</button>
+            </div>
+        </form>
+    </dialog>
+</body>
+</html>

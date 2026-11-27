@@ -1,0 +1,480 @@
+/* =========================================
+   PÁGINA DE IMPRESSÃO DO APTA
+   ========================================= */
+
+.pagina-impressao-apta {
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 20%),
+        linear-gradient(180deg, #f8fbff 0%, #eef3f8 100%);
+    min-height: 100vh;
+}
+
+/* =========================================
+   TOPO DE AÇÕES
+   ========================================= */
+
+.topo-impressao {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid #dbe5f0;
+}
+
+.topo-impressao__conteudo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+.topo-impressao__esquerda {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.topo-impressao__direita {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.acao-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 10px 14px;
+    border-radius: 12px;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.acao-voltar:hover {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.resumo-impressao__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    margin-bottom: 8px;
+    border-radius: 999px;
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.resumo-impressao__titulo {
+    margin: 0 0 4px;
+    color: #0f172a;
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.resumo-impressao__texto {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.96rem;
+}
+
+/* =========================================
+   TOGGLE DE GABARITO
+   ========================================= */
+
+.toggle-gabarito {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-gabarito input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.toggle-gabarito__controle {
+    width: 48px;
+    height: 28px;
+    border-radius: 999px;
+    background-color: #cbd5e1;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.toggle-gabarito__controle::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+    transition: transform 0.2s ease;
+}
+
+.toggle-gabarito input:checked + .toggle-gabarito__controle {
+    background-color: #2563eb;
+}
+
+.toggle-gabarito input:checked + .toggle-gabarito__controle::after {
+    transform: translateX(20px);
+}
+
+.toggle-gabarito__texto {
+    color: #334155;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* =========================================
+   BOTÕES DE AÇÃO
+   ========================================= */
+
+.acoes-impressao {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.botao-impressao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 14px;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.botao-impressao:hover {
+    transform: translateY(-1px);
+}
+
+.botao-impressao--primario {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #ffffff;
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+}
+
+.botao-impressao--secundario {
+    background-color: #ffffff;
+    color: #334155;
+    border: 1px solid #dbe5f0;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+/* =========================================
+   ÁREA PRINCIPAL
+   ========================================= */
+
+.area-impressao {
+    padding-top: 26px;
+    padding-bottom: 40px;
+}
+
+.cabecalho-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 22px;
+    padding: 22px 24px;
+    background-color: #ffffff;
+    border: 1px solid #dbe5f0;
+    border-radius: 22px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+}
+
+.cabecalho-preview__marca {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.cabecalho-preview__logo {
+    width: 54px;
+    height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 800;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+}
+
+.cabecalho-preview__nome {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.cabecalho-preview__subnome {
+    margin: 2px 0 0;
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.cabecalho-preview__dados {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.mini-card-info {
+    min-width: 120px;
+    padding: 12px 14px;
+    background: #f8fbff;
+    border: 1px solid #dbe5f0;
+    border-radius: 16px;
+}
+
+.mini-card-info__rotulo {
+    display: block;
+    margin-bottom: 4px;
+    color: #64748b;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.mini-card-info__valor {
+    color: #0f172a;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+/* =========================================
+   CARTÃO DA FOLHA DA PROVA
+   ========================================= */
+
+.cartao-folha {
+    position: relative;
+    padding: 38px;
+    background-color: #ffffff;
+    border: 1px solid #dbe5f0;
+    border-radius: 26px;
+    box-shadow: 0 22px 48px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+}
+
+.cartao-folha__ornamento {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #2563eb 0%, #60a5fa 50%, #93c5fd 100%);
+}
+
+.folha-impressao {
+    max-width: 850px;
+    margin: 0 auto;
+    color: #000;
+}
+
+.folha-impressao .titulo-prova {
+    margin-bottom: 16px;
+}
+
+.folha-impressao .cabecalho-impressao {
+    margin-bottom: 24px;
+}
+
+/* =========================================
+   MENSAGEM DE ERRO
+   ========================================= */
+
+.area-impressao .error-message {
+    margin-bottom: 18px;
+}
+
+/* =========================================
+   IMPRESSÃO EM PAPEL
+   ========================================= */
+
+@media print {
+    body {
+        background: #ffffff !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .container,
+    .area-impressao {
+        max-width: none;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .cartao-folha {
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    .folha-impressao {
+        max-width: none;
+        margin: 0;
+    }
+}
+
+/* =========================================
+   BARRA COMPACTA DE IMPRESSÃO
+   Reduz a altura e mantém as ações em uma linha.
+   ========================================= */
+@media screen {
+    .topo-impressao__conteudo {
+        max-width: 1440px;
+        min-height: 64px;
+        padding: 10px 24px;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .topo-impressao__esquerda {
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .topo-impressao__direita {
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .acao-voltar {
+        padding: 6px 0;
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    .resumo-impressao {
+        border-left: 1px solid #e2e8f0;
+        padding-left: 16px;
+    }
+
+    .resumo-impressao__titulo {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .toggle-gabarito {
+        gap: 8px;
+    }
+
+    .toggle-gabarito__controle {
+        width: 36px;
+        height: 20px;
+    }
+
+    .toggle-gabarito__controle::after {
+        top: 3px;
+        left: 3px;
+        width: 14px;
+        height: 14px;
+    }
+
+    .toggle-gabarito input:checked + .toggle-gabarito__controle::after {
+        transform: translateX(16px);
+    }
+
+    .toggle-gabarito input:focus-visible + .toggle-gabarito__controle {
+        outline: 2px solid #2459d5;
+        outline-offset: 3px;
+    }
+
+    .toggle-gabarito__texto {
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    .acoes-impressao {
+        gap: 8px;
+    }
+
+    .botao-impressao {
+        min-height: 36px;
+        padding: 7px 12px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        gap: 7px;
+        box-shadow: none;
+        white-space: nowrap;
+    }
+
+    .botao-impressao--primario {
+        background: #2459d5;
+    }
+
+    .area-impressao {
+        padding-top: 18px;
+    }
+}
+
+/* Adaptação para telas menores sem cortar os controles. */
+@media screen and (max-width: 760px) {
+    .topo-impressao__conteudo {
+        padding: 12px 16px;
+    }
+
+    .topo-impressao__direita {
+        justify-content: flex-start;
+    }
+
+    .cabecalho-preview {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+    }
+
+    .cabecalho-preview__dados {
+        justify-content: flex-start;
+    }
+
+    .cartao-folha {
+        padding: 24px 16px;
+        border-radius: 16px;
+    }
+}

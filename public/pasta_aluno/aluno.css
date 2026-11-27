@@ -1,0 +1,389 @@
+/* Identidade visual e estrutura do painel do estudante. */
+.apta-aluno {
+    --azul: #2459d5;
+    --texto: #17243b;
+    --suave: #637189;
+    --linha: #e1e6ef;
+    background: #f5f7fb;
+    color: var(--texto);
+    font-family: Inter, 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+}
+.apta-aluno * {
+    box-sizing: border-box;
+    font-family: inherit;
+}
+.apta-aluno [hidden] {
+    display: none !important;
+}
+.aluno-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 242px;
+    padding: 26px 18px;
+    background: #fff;
+    border-right: 1px solid var(--linha);
+    z-index: 20;
+}
+.aluno-marca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 10px 36px;
+    color: var(--texto);
+    text-decoration: none;
+    font-size: 29px;
+    font-weight: 800;
+}
+.aluno-marca span,
+.aluno-avatar {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--azul);
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+}
+.aluno-rotulo {
+    margin: 18px 10px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--suave);
+}
+.aluno-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--suave);
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+}
+.aluno-menu svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.aluno-menu.ativo,
+.aluno-menu:hover {
+    background: #edf3ff;
+    color: var(--azul);
+}
+.aluno-menu.aluno-sair {
+    color: #b42318;
+}
+.aluno-header {
+    position: fixed;
+    inset: 0 0 auto 242px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 28px;
+    border-bottom: 1px solid var(--linha);
+    background: #fff;
+    z-index: 10;
+}
+.aluno-perfil {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.aluno-perfil small {
+    display: block;
+    color: var(--suave);
+}
+.aluno-avatar {
+    background: #e8f8f2;
+    color: #087e65;
+}
+.aluno-layout {
+    margin-left: 242px;
+    padding: 96px 28px 32px;
+    min-width: 0;
+}
+/* Indicadores calculados com as avaliações reais da turma. */
+.aluno-intro .aluno-rotulo {
+    margin: 0 0 6px;
+    color: var(--azul);
+}
+.aluno-intro h1,
+.apta-aluno .prova-topo h1 {
+    font-size: 28px;
+    line-height: 1.3;
+}
+.aluno-intro p:last-child {
+    color: var(--suave);
+    margin-top: 8px;
+}
+.aluno-indicadores {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+.aluno-indicadores article,
+.aluno-painel {
+    padding: 22px;
+    border: 1px solid var(--linha);
+    border-radius: 14px;
+    background: #fff;
+}
+.aluno-indicadores span {
+    color: var(--suave);
+}
+.aluno-indicadores strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 30px;
+    line-height: 1.2;
+    color: var(--azul);
+}
+.aluno-indicadores article:nth-child(2) strong {
+    color: #087e65;
+}
+/* Filtros e cartões de avaliação com estados visuais distintos. */
+.aluno-filtros {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.aluno-filtros h2 {
+    font-size: 18px;
+}
+.aluno-filtros select {
+    min-height: 40px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid var(--linha);
+    border-radius: 8px;
+    color: var(--texto);
+}
+.aluno-lista {
+    display: grid;
+    gap: 12px;
+}
+.aluno-prova {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+}
+.aluno-prova-info {
+    flex: 1 1 220px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.aluno-prova-info h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+.aluno-prova-info p {
+    color: var(--suave);
+}
+.aluno-status {
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: #eef2f7;
+    color: #52617a;
+    font-size: 12px;
+    font-weight: 600;
+}
+.aluno-status.aguardando {
+    background: #edf3ff;
+    color: var(--azul);
+}
+.aluno-status.aberta,
+.aluno-status.enviada {
+    background: #e8f8f2;
+    color: #087e65;
+}
+.apta-aluno .btn {
+    width: auto;
+    flex: none;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 0;
+    cursor: pointer;
+}
+.aluno-vazio {
+    padding: 32px 16px;
+    text-align: center;
+    color: var(--suave);
+    background: #f8fafc;
+    border: 1px dashed var(--linha);
+    border-radius: 10px;
+}
+.aluno-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+.apta-aluno .questao-bloco {
+    min-width: 0;
+}
+.apta-aluno .prova-topo {
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+/* Adaptação para telas pequenas. */
+@media (max-width: 760px) {
+    .aluno-sidebar,
+    .aluno-header {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 16px;
+    }
+    .aluno-layout {
+        margin-left: 0;
+        padding: 16px;
+    }
+    .aluno-indicadores {
+        grid-template-columns: 1fr;
+    }
+    .aluno-painel {
+        padding: 16px;
+    }
+}
+
+/* Modal de confirmação e avisos durante a avaliação. */
+.modal-avaliacao {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: min(440px, calc(100% - 32px));
+    max-height: calc(100% - 32px);
+    overflow: auto;
+    padding: 26px;
+    border: 1px solid #dbe5f0;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #17243b;
+    box-shadow: 0 24px 70px #17243b33;
+    font-family: Inter, 'Segoe UI', Arial, sans-serif;
+}
+
+.modal-avaliacao::backdrop {
+    background: #17243b80;
+    backdrop-filter: blur(3px);
+}
+
+.modal-simbolo {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    background: #edf3ff;
+    color: #2459d5;
+}
+
+.modal-simbolo svg {
+    width: 25px;
+    height: 25px;
+}
+
+.modal-avaliacao h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.25;
+}
+
+.modal-avaliacao p {
+    margin: 0 0 10px;
+    color: #52617a;
+    font-size: 14px;
+}
+
+#modal-progresso {
+    margin: 16px 0;
+    padding: 14px;
+    border-radius: 10px;
+    background: #f5f7fb;
+}
+
+#modal-barra {
+    width: 100%;
+    height: 8px;
+    accent-color: #2459d5;
+}
+
+#modal-pendentes {
+    margin: 8px 0 0;
+}
+
+.modal-acoes {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-acoes button,
+#botao-tela-cheia {
+    padding: 10px 14px;
+    border: 1px solid #dbe5f0;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #17243b;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#modal-confirmar {
+    border-color: #2459d5;
+    background: #2459d5;
+    color: #ffffff;
+}
+
+/* Indica a proteção ativa sem interferir na área das questões. */
+.aviso-protecao {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0 20px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #edf3ff;
+    color: #244b9c;
+    font-size: 14px;
+}
+
+#botao-tela-cheia {
+    margin-left: auto;
+}
+
+/* Destaque para avaliações canceladas. */
+.aluno-status.cancelada {
+    background-color: #fef2f2;
+    color: #b91c1c;
+}

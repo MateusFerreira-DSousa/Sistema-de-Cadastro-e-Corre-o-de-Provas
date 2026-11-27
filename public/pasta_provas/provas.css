@@ -1,0 +1,238 @@
+/* Identidade visual do painel de avaliações, isolada das demais páginas. */
+.apta-provas {
+    --azul: #2459d5;
+    --linha: #e1e6ef;
+    --texto: #17243b;
+    --suave: #637189;
+    background: #f5f7fb;
+    color: var(--texto);
+    font-family: Inter, 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+}
+.apta-provas * {
+    box-sizing: border-box;
+    font-family: inherit;
+}
+.apta-provas [hidden] {
+    display: none !important;
+}
+/* Menu lateral e cabeçalho fixos. */
+.apta-provas .provas-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 242px;
+    height: 100vh;
+    padding: 26px 18px;
+    border: 0;
+    border-right: 1px solid var(--linha);
+    border-radius: 0;
+    background: white;
+    overflow-y: auto;
+    z-index: 20;
+}
+.provas-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 29px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--texto);
+    text-decoration: none;
+    margin: 0 10px 32px;
+}
+.provas-brand span,
+.provas-avatar {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--azul);
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+}
+.provas-nav-label {
+    margin: 18px 10px 8px;
+    color: var(--suave);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.apta-provas .menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 11px 12px;
+    margin: 3px 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #52617a;
+    text-align: left;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.apta-provas .menu-btn:hover,
+.apta-provas .menu-btn.active {
+    background: #edf3ff;
+    color: var(--azul);
+}
+.provas-sidebar svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.apta-provas .provas-sair {
+    color: #c62828;
+}
+.apta-provas .provas-header {
+    position: fixed;
+    inset: 0 0 auto 242px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    margin: 0;
+    background: white;
+    border-bottom: 1px solid var(--linha);
+    z-index: 10;
+}
+.provas-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.provas-avatar {
+    background: #edf3ff;
+    color: var(--azul);
+    font-size: 15px;
+}
+/* Área principal e ações compactas. */
+.provas-layout {
+    margin-left: 242px;
+    padding: 96px 28px 32px;
+    min-width: 0;
+}
+.apta-provas .content-area {
+    min-width: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+}
+.apta-provas .dashboard-section {
+    padding: 26px;
+    border: 1px solid var(--linha);
+    border-radius: 14px;
+    background: white;
+}
+.provas-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.provas-heading .provas-nav-label {
+    margin: 0 0 6px;
+    color: var(--azul);
+}
+.apta-provas h2 {
+    font-size: 25px;
+    line-height: 1.3;
+    margin-bottom: 6px;
+}
+.apta-provas .section-desc {
+    color: var(--suave);
+    font-size: 14px;
+    margin: 8px 0 24px;
+}
+.apta-provas .btn {
+    width: auto;
+    padding: 9px 13px;
+    font-size: 13px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+.apta-provas .btn-salvar {
+    flex: none;
+    background: var(--azul);
+    min-height: 42px;
+}
+.apta-provas .form-group input,
+.apta-provas .form-group select,
+.apta-provas .form-control {
+    min-height: 42px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+/* Tabela com colunas legíveis e ações alinhadas. */
+.provas-table-wrap {
+    overflow-x: auto;
+}
+.apta-provas .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.provas-table-wrap .data-table {
+    min-width: 800px;
+}
+.apta-provas .data-table th {
+    background: #f5f7fb;
+    color: #52617a;
+    font-weight: 600;
+    text-align: left;
+}
+.apta-provas .data-table th,
+.apta-provas .data-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--linha);
+    vertical-align: middle;
+}
+.apta-provas .data-table td:first-child {
+    min-width: 170px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+.apta-provas .data-table td:nth-child(2),
+.apta-provas .data-table td:nth-child(3) {
+    white-space: nowrap;
+}
+.apta-provas .data-table td.acoes {
+    display: table-cell;
+    min-width: 190px;
+}
+.apta-provas .acoes .btn {
+    display: inline-block;
+    margin: 3px 2px;
+}
+/* Responsividade: menu no fluxo normal em telas menores. */
+@media (max-width: 760px) {
+    .apta-provas .provas-sidebar,
+    .apta-provas .provas-header {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 16px;
+    }
+    .provas-layout {
+        margin-left: 0;
+        padding: 16px;
+    }
+    .apta-provas .dashboard-section {
+        padding: 16px;
+    }
+    .apta-provas .form-row {
+        grid-template-columns: 1fr;
+    }
+}

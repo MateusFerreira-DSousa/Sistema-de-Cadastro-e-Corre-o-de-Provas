@@ -4,7 +4,7 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { mkdirSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
-import { scryptSync, randomBytes, timingSafeEqual } from 'node:crypto';
+import { scryptSync, randomBytes, timingSafeEqual, createHash } from 'node:crypto';
 import { join, extname, dirname, sep } from 'node:path';
 
 const PORTA = Number(process.env.PORT) || 3000;
@@ -13,7 +13,9 @@ const PUBLICO = join(import.meta.dirname, 'public');
 const DOZE_HORAS = 12 * 3600_000;
 const TOLERANCIA_ENVIO = 60_000; // envio automático no fim do tempo pode chegar com atraso de rede
 const LETRAS = ['A', 'B', 'C', 'D', 'E'];
+// Professores gerenciam provas; administradores têm acesso somente de leitura.
 const PROF = ['professor', 'superadmin'];
+const EDITORES_PROVA = ['professor'];
 // Turmas aceitas: 9° A até 9° I. Para abrir outra série, acrescente aqui.
 const TURMAS = [...'ABCDEFGHI'].map((letra) => `9° ${letra}`);
 
@@ -69,6 +71,37 @@ CREATE TABLE IF NOT EXISTS respostas (
 );
 `);
 
+// Migração não destrutiva: registra o motivo de cancelamento nas tentativas.
+if (!db.prepare('PRAGMA table_info(tentativas)').all().some((coluna) => coluna.name === 'cancelamento')) {
+  db.exec('ALTER TABLE tentativas ADD COLUMN cancelamento TEXT');
+}
+
+// Guarda as saídas e o instante em que o estudante deixou a tela.
+db.exec(`CREATE TABLE IF NOT EXISTS controle_avaliacao (
+  prova_id INTEGER NOT NULL REFERENCES provas(id) ON DELETE CASCADE,
+  aluno_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  saidas INTEGER NOT NULL DEFAULT 0,
+  fora_desde INTEGER,
+  PRIMARY KEY (prova_id, aluno_id)
+)`);
+
+function cancelarAvaliacao(provaId, alunoId, motivo) {
+  db.prepare(`INSERT OR IGNORE INTO tentativas
+    (prova_id, aluno_id, enviada_em, nota, cancelamento)
+    VALUES (?, ?, ?, 0, ?)`).run(provaId, alunoId, Date.now(), motivo);
+  db.prepare('DELETE FROM controle_avaliacao WHERE prova_id = ? AND aluno_id = ?').run(provaId, alunoId);
+}
+
+// O servidor aplica o limite mesmo quando o navegador suspende seus timers.
+function verificarAusencias() {
+  const registros = db.prepare(`SELECT prova_id, aluno_id FROM controle_avaliacao
+    WHERE fora_desde IS NOT NULL AND fora_desde < ?`).all(Date.now() - 10000);
+  for (const registro of registros) {
+    cancelarAvaliacao(registro.prova_id, registro.aluno_id, 'Mais de 10 segundos fora da tela');
+  }
+}
+setInterval(verificarAusencias, 250).unref();
+
 function transacao(fn) {
   db.exec('BEGIN');
   try {
@@ -110,7 +143,6 @@ if (!db.prepare("SELECT 1 FROM users WHERE role = 'superadmin'").get()) {
 
 // ---------- Tempo (fuso fixo de Fortaleza, UTC-3, sem horário de verão) ----------
 const paraEpoch = (data, hora) => Date.parse(`${data}T${hora}:00-03:00`);
-const hojeLocal = () => new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 10);
 
 // ---------- Utilidades HTTP ----------
 class ErroHttp extends Error {
@@ -250,6 +282,42 @@ const rotas = {
     },
   },
 
+  // Redefine credenciais sem alterar o ID ou os registros vinculados à conta.
+  'POST /api/usuarios/credenciais': {
+    roles: ['superadmin'],
+    fn({ corpo }) {
+      const id = Number(corpo.id);
+      const login = typeof corpo.login === 'string' ? corpo.login.trim() : '';
+      const senha = corpo.senha ?? '';
+      if (!Number.isSafeInteger(id) || id < 1 || !login || login.length > 254) {
+        falha(400, 'Informe um usuário e um login válido.');
+      }
+      if (typeof senha !== 'string' || (senha !== '' && (senha.length < 8 || senha.length > 128))) {
+        falha(400, 'A nova senha deve ter entre 8 e 128 caracteres.');
+      }
+      const conta = db.prepare("SELECT id, login FROM users WHERE id = ? AND role IN ('professor', 'aluno')").get(id);
+      if (!conta) {
+        falha(404, 'Usuário não encontrado.');
+      }
+      if (db.prepare('SELECT id FROM users WHERE login = ? AND id != ?').get(login, id)) {
+        falha(409, 'Esse login já existe.');
+      }
+      // Uma senha vazia mantém o hash anterior. Alterações encerram sessões antigas.
+      transacao(() => {
+        if (senha) {
+          db.prepare('UPDATE users SET login = ?, senha_hash = ? WHERE id = ?')
+            .run(login, gerarHash(senha), id);
+        } else {
+          db.prepare('UPDATE users SET login = ? WHERE id = ?').run(login, id);
+        }
+        if (senha || login !== conta.login) {
+          db.prepare('DELETE FROM sessions WHERE user_id = ?').run(id);
+        }
+      });
+      return { ok: true };
+    },
+  },
+
   'POST /api/usuarios/excluir': {
     roles: ['superadmin'],
     fn({ corpo }) {
@@ -278,7 +346,7 @@ const rotas = {
   },
 
   'POST /api/provas': {
-    roles: PROF,
+    roles: EDITORES_PROVA,
     fn({ corpo, usuario }) {
       const p = validarProva(corpo);
       return transacao(() => {
@@ -304,7 +372,7 @@ const rotas = {
   },
 
   'POST /api/provas/editar': {
-    roles: PROF,
+    roles: EDITORES_PROVA,
     fn({ corpo, usuario }) {
       const prova = provaDoProfessor(corpo.id, usuario);
 
@@ -335,7 +403,7 @@ const rotas = {
   },
 
   'POST /api/provas/excluir': {
-    roles: PROF,
+    roles: EDITORES_PROVA,
     fn({ corpo, usuario }) {
       const prova = provaDoProfessor(corpo.id, usuario);
       db.prepare('DELETE FROM provas WHERE id = ?').run(prova.id);
@@ -346,7 +414,7 @@ const rotas = {
     roles: PROF,
     fn({ url, usuario }) {
       const prova = provaDoProfessor(url.searchParams.get('prova'), usuario);
-      const alunos = db.prepare(`SELECT u.nome, t.nota, t.enviada_em FROM users u
+      const alunos = db.prepare(`SELECT u.nome, t.nota, t.enviada_em, t.cancelamento FROM users u
         LEFT JOIN tentativas t ON t.aluno_id = u.id AND t.prova_id = ?
         WHERE u.role = 'aluno' AND u.turma = ? ORDER BY u.nome`).all(prova.id, prova.turma);
       return { prova, alunos };
@@ -358,12 +426,18 @@ const rotas = {
     roles: ['aluno'],
     fn({ usuario }) {
       const agora = Date.now();
-      return db.prepare(`SELECT p.id, p.titulo, p.data, p.hora_inicio, p.hora_fim, t.enviada_em FROM provas p
+      // Lista todas as avaliações da turma, inclusive as futuras e encerradas.
+      // As questões continuam protegidas pela rota de início da prova.
+      return db.prepare(`
+        SELECT p.id, p.titulo, p.data, p.hora_inicio, p.hora_fim, t.enviada_em, t.cancelamento
+        FROM provas p
         LEFT JOIN tentativas t ON t.prova_id = p.id AND t.aluno_id = ?
-        WHERE p.turma = ? AND p.data = ? ORDER BY p.hora_inicio`).all(usuario.id, usuario.turma, hojeLocal())
+        WHERE p.turma = ?
+        ORDER BY p.data DESC, p.hora_inicio
+      `).all(usuario.id, usuario.turma)
         .map((p) => ({
           ...p,
-          estado: p.enviada_em ? 'enviada'
+          estado: p.cancelamento ? 'cancelada' : p.enviada_em ? 'enviada'
             : agora < paraEpoch(p.data, p.hora_inicio) ? 'aguardando'
             : agora < paraEpoch(p.data, p.hora_fim) ? 'aberta' : 'encerrada',
         }));
@@ -379,11 +453,43 @@ const rotas = {
       }
       const agora = Date.now(), fim = paraEpoch(prova.data, prova.hora_fim);
       if (agora < paraEpoch(prova.data, prova.hora_inicio) || agora >= fim) falha(409, 'A prova não está aberta agora.');
+      db.prepare('INSERT OR IGNORE INTO controle_avaliacao (prova_id, aluno_id) VALUES (?, ?)').run(prova.id, usuario.id);
+      const controle = db.prepare('SELECT saidas FROM controle_avaliacao WHERE prova_id = ? AND aluno_id = ?').get(prova.id, usuario.id);
       // O gabarito (correta) nunca sai daqui para o navegador do aluno.
       const questoes = db.prepare('SELECT id, enunciado, alt_a, alt_b, alt_c, alt_d, alt_e FROM questoes WHERE prova_id = ? ORDER BY ordem')
         .all(prova.id)
         .map((q) => ({ id: q.id, enunciado: q.enunciado, alternativas: [q.alt_a, q.alt_b, q.alt_c, q.alt_d, q.alt_e] }));
-      return { titulo: prova.titulo, fim, agora, questoes };
+      // Ordem estável por aluno e prova: mantém os IDs usados na correção.
+      const ordem = (questao) => createHash('sha256')
+        .update(`${usuario.id}:${prova.id}:${questao.id}`)
+        .digest('hex');
+      questoes.sort((a, b) => ordem(a).localeCompare(ordem(b)));
+      return { titulo: prova.titulo, fim, agora, questoes, saidas: controle.saidas };
+    },
+  },
+
+  // Recebe eventos de saída e retorno da tela, sem confiar no contador do navegador.
+  'POST /api/aluno/foco': {
+    roles: ['aluno'],
+    fn({ corpo, usuario }) {
+      const prova = provaDoAluno(corpo.provaId, usuario);
+      verificarAusencias();
+      const tentativa = () => db.prepare('SELECT cancelamento FROM tentativas WHERE prova_id = ? AND aluno_id = ?').get(prova.id, usuario.id);
+      if (tentativa()) return { cancelamento: tentativa().cancelamento, finalizada: true };
+      const controle = db.prepare('SELECT * FROM controle_avaliacao WHERE prova_id = ? AND aluno_id = ?').get(prova.id, usuario.id);
+      if (!controle) falha(409, 'Avaliação não iniciada.');
+      if (corpo.evento === 'saida' && controle.fora_desde === null) {
+        const saidas = controle.saidas + 1;
+        if (saidas >= 3) {
+          cancelarAvaliacao(prova.id, usuario.id, 'Três saídas da tela');
+          return { cancelamento: 'Três saídas da tela', finalizada: true };
+        }
+        db.prepare('UPDATE controle_avaliacao SET saidas = ?, fora_desde = ? WHERE prova_id = ? AND aluno_id = ?')
+          .run(saidas, Date.now(), prova.id, usuario.id);
+      } else if (corpo.evento === 'retorno') {
+        db.prepare('UPDATE controle_avaliacao SET fora_desde = NULL WHERE prova_id = ? AND aluno_id = ?').run(prova.id, usuario.id);
+      }
+      return db.prepare('SELECT saidas FROM controle_avaliacao WHERE prova_id = ? AND aluno_id = ?').get(prova.id, usuario.id);
     },
   },
 
@@ -395,6 +501,9 @@ const rotas = {
       if (agora < paraEpoch(prova.data, prova.hora_inicio) || agora > paraEpoch(prova.data, prova.hora_fim) + TOLERANCIA_ENVIO) {
         falha(409, 'Fora do horário da prova.');
       }
+      verificarAusencias();
+      const controle = db.prepare('SELECT fora_desde FROM controle_avaliacao WHERE prova_id = ? AND aluno_id = ?').get(prova.id, usuario.id);
+      if (controle?.fora_desde != null) falha(409, 'Retorne à tela da avaliação antes de enviar.');
       const respostas = corpo.respostas ?? {};
       const questoes = db.prepare('SELECT id FROM questoes WHERE prova_id = ?').all(prova.id);
 
@@ -414,6 +523,7 @@ const rotas = {
           inserir.run(tentativaId, q.id, marcada);
         }
         db.prepare(`UPDATE tentativas SET nota = ${NOTA_SQL} WHERE id = ?`).run(tentativaId);
+        db.prepare('DELETE FROM controle_avaliacao WHERE prova_id = ? AND aluno_id = ?').run(prova.id, usuario.id);
       });
     },
   },
@@ -431,7 +541,19 @@ const TIPOS = {
 
 async function servirArquivo(caminho, res) {
   try {
-    const arquivo = join(PUBLICO, decodeURIComponent(caminho === '/' ? '/index.html' : caminho));
+    // Mantém a página inicial e os endereços antigos compatíveis com a nova estrutura.
+    const caminhosAntigos = {
+      '/': '/pasta_inicio/index.html',
+      '/index.html': '/pasta_inicio/index.html',
+      '/login.html': '/pasta_login/login.html',
+      '/admin.html': '/pasta_admin/admin.html',
+      '/acessoprof.html': '/pasta_provas/acessoprof.html',
+      '/aluno.html': '/pasta_aluno/aluno.html',
+      '/imprimir.html': '/pasta_impressao/imprimir.html',
+      '/senha.html': '/pasta_senha/senha.html',
+    };
+    const destino = Object.hasOwn(caminhosAntigos, caminho) ? caminhosAntigos[caminho] : caminho;
+    const arquivo = join(PUBLICO, decodeURIComponent(destino));
     if (!arquivo.startsWith(PUBLICO + sep)) throw new Error('fora de public/');
     const conteudo = await readFile(arquivo);
     res.writeHead(200, { 'Content-Type': TIPOS[extname(arquivo)] ?? 'application/octet-stream' });

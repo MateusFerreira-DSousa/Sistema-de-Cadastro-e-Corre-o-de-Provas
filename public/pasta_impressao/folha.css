@@ -1,0 +1,65 @@
+/* Formatação compartilhada pela prévia, impressão e exportação Word. */
+.folha-impressao {
+    font-family: Arial, sans-serif;
+    font-size: 12pt;
+    color: #000;
+    line-height: 1.35;
+}
+
+/* Cabeçalho de identificação da avaliação. */
+.folha-impressao .titulo-prova {
+    font-size: 16pt;
+    text-align: center;
+    margin: 0 0 12pt;
+}
+
+.folha-impressao .cabecalho-impressao {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 18pt;
+}
+
+.folha-impressao .cabecalho-impressao td {
+    border: 1px solid #000;
+    padding: 6pt;
+    font-size: 11pt;
+}
+
+/* Compacta as questões e evita separá-las entre páginas. */
+.folha-impressao .questao-impressao {
+    margin: 0 0 20pt;
+    page-break-inside: avoid;
+}
+
+/* Alinha a numeração à esquerda e preserva quebras reais do enunciado. */
+.folha-impressao .enunciado-impressao {
+    margin: 0 0 4pt;
+    padding: 0;
+    text-align: left;
+    text-indent: 0;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+.folha-impressao .enunciado-impressao strong {
+    display: inline;
+    font-weight: 700;
+}
+
+/* Alternativas com recuo discreto e espaçamento uniforme. */
+.folha-impressao .alternativa-impressao {
+    margin: 0 0 1pt 12pt;
+    padding: 0;
+    text-indent: 0;
+    text-align: left;
+}
+
+/* Mantém o gabarito em uma página separada na impressão. */
+.folha-impressao .gabarito-impressao {
+    page-break-before: always;
+}
+
+.folha-impressao .gabarito-impressao h2 {
+    font-size: 14pt;
+    margin: 0 0 10pt;
+}

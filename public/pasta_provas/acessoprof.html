@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações - Apta</title>
+    <link rel="stylesheet" href="/compartilhado/style.css">
+    <link rel="stylesheet" href="/pasta_provas/provas.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilo compartilhado dos seletores do Apta -->
+    <link rel="stylesheet" href="/compartilhado/select.css">
+</head>
+<body class="dashboard-page apta-provas">
+
+    <!-- Navegação fixa com identidade visual do Apta. -->
+    <aside class="sidebar-menu provas-sidebar">
+        <a class="provas-brand" href="/pasta_inicio/index.html"><span>A</span> apta.</a>
+        <p class="provas-nav-label">AVALIAÇÕES</p>
+        <nav class="menu-nav">
+            <button type="button" class="menu-btn active" data-secao="sec-provas">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+                Provas
+            </button>
+            <button type="button" class="menu-btn" data-secao="sec-nova-prova" data-professor hidden>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                Nova prova
+            </button>
+            <button type="button" class="menu-btn" data-secao="sec-resultados">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v17h17M8 16v-5M13 16V7M18 16V4"/></svg>
+                Resultados
+            </button>
+        </nav>
+        <p class="provas-nav-label">CONTA</p>
+        <a href="/pasta_admin/admin.html" class="menu-btn" id="link-admin" hidden>Administração</a>
+        <a href="/pasta_senha/senha.html" class="menu-btn">Alterar senha</a>
+        <button type="button" class="menu-btn provas-sair" id="botao-sair">Sair</button>
+    </aside>
+    <header class="dashboard-header provas-header">
+        <span>Apta / Avaliações</span>
+        <div class="provas-user"><span class="provas-avatar">A</span><strong class="nome-usuario"></strong></div>
+    </header>
+    <div class="provas-layout">
+        <main class="content-area">
+
+            <!-- SEÇÃO 1: MINHAS PROVAS -->
+            <section id="sec-provas" class="dashboard-section active-section">
+                <div class="provas-heading">
+                    <div><p class="provas-nav-label">GESTÃO PEDAGÓGICA</p><h2 id="titulo-lista">Minhas provas</h2></div>
+                    <button type="button" class="btn btn-salvar" id="nova-prova-topo" data-professor hidden>+ Nova prova</button>
+                </div>
+                <p class="section-desc">Acompanhe as avaliações e as entregas.</p>
+
+                <div class="provas-table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Título</th><th>Turma</th><th>Data</th><th>Horário</th><th>Questões</th><th>Enviadas</th><th>Ações</th></tr>
+                    </thead>
+                    <tbody id="lista-provas"></tbody>
+                </table>
+                </div>
+            </section>
+
+            <!-- SEÇÃO 2: NOVA PROVA -->
+            <section id="sec-nova-prova" class="dashboard-section" data-professor hidden>
+                <h2 id="titulo-form-prova">Nova prova</h2>
+                <p class="section-desc">Preencha os dados da prova, as questões e marque a alternativa correta de cada uma (gabarito).</p>
+                <div id="aviso-edicao" class="aviso" hidden>
+                    Alunos já enviaram esta prova. Só o gabarito pode ser alterado; as notas serão recalculadas ao salvar.
+                </div>
+
+                <form id="form-prova" class="form-card">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="idTitulo">Título da prova:</label>
+                            <input type="text" id="idTitulo" name="titulo" placeholder="Ex.: Avaliação Parcial de Matemática" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idTurma">Turma:</label>
+                            <select id="idTurma" name="turma" required>
+                                <option value="">Selecione a turma</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row form-row-3">
+                        <div class="form-group">
+                            <label for="idData">Data:</label>
+                            <input type="date" id="idData" name="data" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idInicio">Início:</label>
+                            <input type="time" id="idInicio" name="hora_inicio" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idFim">Fim:</label>
+                            <input type="time" id="idFim" name="hora_fim" required>
+                        </div>
+                    </div>
+
+                    <div id="questoes"></div>
+
+                    <button type="button" class="btn btn-sm btn-secondary" id="botao-add-questao">+ Adicionar questão</button>
+
+                    <div id="mensagem-prova" hidden role="alert"></div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-salvar">Salvar prova</button>
+                        <button type="button" class="btn btn-cancelar" id="botao-cancelar-edicao" hidden>Cancelar edição</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- SEÇÃO 3: RESULTADOS -->
+            <section id="sec-resultados" class="dashboard-section">
+                <h2>Resultados</h2>
+                <p class="section-desc">Notas dos alunos da turma da prova. A correção é automática.</p>
+
+                <div class="form-group">
+                    <label for="selectProva">Selecione a prova:</label>
+                    <select id="selectProva"></select>
+                </div>
+
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h4>Média da turma</h4>
+                        <span class="stat-number" id="media">—</span>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Provas enviadas</h4>
+                        <span class="stat-number" id="enviadas">—</span>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Aluno</th><th>Situação</th><th>Nota</th></tr>
+                    </thead>
+                    <tbody id="lista-resultados"></tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="/compartilhado/script.js"></script>
+    <script src="/pasta_provas/provas.js"></script>
+</body>
+</html>

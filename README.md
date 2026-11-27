@@ -209,3 +209,7 @@ Pare o servidor e copie a pasta `data/` inteira. O banco usa WAL, e copiar só o
 - Fora do escopo: descritores, embaralhar questões, feedback ao aluno, recuperação de senha.
 
 Atalhos deliberados no código estão marcados com comentários `ponytail:`, que explicam o limite e como evoluir.
+
+## Organização das interfaces
+
+Os arquivos de cada tela estão em `public/pasta_inicio`, `pasta_login`, `pasta_admin`, `pasta_provas`, `pasta_aluno`, `pasta_impressao` e `pasta_senha`. Estilos e funções comuns ficam em `public/compartilhado`. O servidor continua na raiz e o banco local permanece em `data/` (não versionado). Inicie com `npm start`.

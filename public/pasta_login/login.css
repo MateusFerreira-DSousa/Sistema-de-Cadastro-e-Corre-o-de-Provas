@@ -5,6 +5,7 @@
 
 .auth-page {
     min-height: 100vh;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
     margin: 0;
     padding: 32px;
     display: flex;
@@ -16,12 +17,19 @@
         linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
 }
 
+/* Padroniza a tipografia e evita que o padding aumente as dimensões. */
+.auth-page,
+.auth-page * {
+    box-sizing: border-box;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
 /* Estrutura principal da página */
 .auth-shell {
     width: 100%;
     max-width: 1160px;
     display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
     background-color: #ffffff;
     border: 1px solid #dbe5f0;
     border-radius: 28px;
@@ -33,7 +41,7 @@
    PAINEL ESQUERDO / MARCA
    ========================================= */
 .auth-brand-panel {
-    padding: 56px 48px;
+    padding: 44px 40px;
     background:
         linear-gradient(145deg, #0f172a 0%, #172554 55%, #1d4ed8 100%);
     color: #ffffff;
@@ -124,15 +132,16 @@
    PAINEL DIREITO / FORMULÁRIO
    ========================================= */
 .auth-form-panel {
-    padding: 40px 36px;
+    padding: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #ffffff;
 }
 
-.auth-card-modern {
+.auth-card.auth-card-modern {
     width: 100%;
+    min-width: 0;
     max-width: 460px;
     padding: 0;
     background: transparent;
@@ -146,7 +155,7 @@
     margin: 0;
 }
 
-.auth-legend-modern {
+.auth-card-modern .auth-legend-modern {
     width: 100%;
     margin-bottom: 10px;
     border: none;
@@ -154,7 +163,7 @@
     text-align: left;
     text-transform: none;
     letter-spacing: -0.02em;
-    font-size: 1.9rem;
+    font-size: 2rem;
     line-height: 1.2;
     font-weight: 800;
     color: #0f172a;
@@ -167,134 +176,55 @@
     line-height: 1.6;
 }
 
-/* Campos do formulário */
-/* =========================================
-   TIPOGRAFIA GERAL DA TELA DE LOGIN
-   Força uma identidade visual mais consistente
-   ========================================= */
-
-.auth-page,
-.auth-page * {
-    font-family: "Inter", "Segoe UI", Arial, sans-serif;
-}
-
-/* =========================================
-   TÍTULOS E TEXTOS DO PAINEL DE LOGIN
-   Ajusta o peso e a aparência da fonte
-   ========================================= */
-
-.auth-brand-badge,
-.auth-brand-logo-text,
-.auth-brand-title,
-.auth-brand-description,
-.auth-brand-list li,
-.auth-legend-modern,
-.auth-subtitle,
-.auth-footer-links p,
-.auth-footer-links a,
-.checkbox-inline,
-.auth-card-modern .form-group label,
-.auth-card-modern .form-group input,
-.auth-card-modern .form-group input::placeholder,
-.btn-login-modern {
-    font-family: "Inter", "Segoe UI", Arial, sans-serif;
-}
-
-/* =========================================
-   GRUPOS DE CAMPO
-   Mantém um espaçamento mais confortável
-   ========================================= */
-
+/* Campos compactos: altura inclui bordas e preenchimento. */
 .auth-card-modern .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 24px;
+    gap: 8px;
+    margin-bottom: 18px;
 }
-
-/* =========================================
-   RÓTULOS DOS CAMPOS
-   Afasta mais o texto do campo
-   ========================================= */
 
 .auth-card-modern .form-group label {
-    display: inline-block;
-    margin-bottom: 12px;
+    margin: 0;
     color: #1e293b;
-    font-size: 0.95rem;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 600;
     line-height: 1.4;
-    letter-spacing: -0.01em;
 }
-
-/* =========================================
-   CAMPOS DE LOGIN E SENHA
-   Melhora legibilidade e acabamento
-   ========================================= */
 
 .auth-card-modern .form-group input[type="text"],
 .auth-card-modern .form-group input[type="password"] {
+    box-sizing: border-box;
     width: 100%;
-    min-height: 58px;
-    padding: 16px 18px;
+    height: 44px;
+    min-height: 0;
+    padding: 0 14px;
     border: 1px solid #d6dfeb;
-    border-radius: 14px;
+    border-radius: 10px;
     background-color: #f8fbff;
-    color: #0f172a;
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.4;
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background-color 0.2s ease,
-        transform 0.2s ease;
+    color: #17243b;
+    font: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* =========================================
-   PLACEHOLDER DOS INPUTS
-   Deixa mais suave e alinhado ao layout
-   ========================================= */
-
-.auth-card-modern .form-group input[type="text"]::placeholder,
-.auth-card-modern .form-group input[type="password"]::placeholder {
-    color: #94a3b8;
-    font-size: 0.98rem;
-    font-weight: 400;
+/* Destaque do campo ativo, sem deslocar o formulário. */
+.auth-card-modern .form-group input::placeholder {
+    color: #64748b;
 }
 
-/* =========================================
-   FOCO DOS CAMPOS
-   Mantém o destaque visual sem exagero
-   ========================================= */
-
-.auth-card-modern .form-group input[type="text"]:focus,
-.auth-card-modern .form-group input[type="password"]:focus {
+.auth-card-modern .form-group input:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: #2459d5;
     background-color: #ffffff;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
-    transform: translateY(-1px);
-}
-
-.auth-card-modern .form-group input[type="text"]::placeholder,
-.auth-card-modern .form-group input[type="password"]::placeholder {
-    color: #94a3b8;
-}
-
-.auth-card-modern .form-group input[type="text"]:focus,
-.auth-card-modern .form-group input[type="password"]:focus {
-    outline: none;
-    border-color: #2563eb;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
-    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(36, 89, 213, 0.12);
 }
 
 /* Mostrar senha */
 .auth-options {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-bottom: 20px;
 }
 
@@ -315,10 +245,10 @@
 /* Botão principal */
 .btn-login-modern {
     width: 100%;
-    padding: 15px 18px;
+    padding: 12px 18px;
     border: none;
     border-radius: 14px;
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    background: #2459d5;
     color: #ffffff;
     font-size: 1rem;
     font-weight: 700;
@@ -364,7 +294,7 @@
 }
 
 /* Mensagem de erro */
-.error-message {
+.auth-card-modern .error-message {
     margin-bottom: 16px;
     background-color: #fef2f2;
     color: #dc2626;
@@ -414,7 +344,7 @@
         font-size: 1.7rem;
     }
 
-    .auth-legend-modern {
+    .auth-card-modern .auth-legend-modern {
         font-size: 1.55rem;
     }
 
@@ -427,62 +357,4 @@
         height: 46px;
         font-size: 1.25rem;
     }
-}
-
-/* =========================================
-   TÍTULO PRINCIPAL DO FORMULÁRIO
-   ========================================= */
-
-.auth-legend-modern {
-    width: 100%;
-    margin-bottom: 10px;
-    border: none;
-    padding: 0;
-    text-align: left;
-    text-transform: none;
-    letter-spacing: -0.03em;
-    font-size: 2rem;
-    line-height: 1.15;
-    font-weight: 800;
-    color: #0f172a;
-}
-
-/* =========================================
-   TEXTO DE APOIO DO FORMULÁRIO
-   ========================================= */
-
-.auth-subtitle {
-    margin-bottom: 28px;
-    color: #64748b;
-    font-size: 1rem;
-    line-height: 1.6;
-    font-weight: 400;
-}
-
-/* =========================================
-   ÁREA DE OPÇÕES DO FORMULÁRIO
-   ========================================= */
-
-.auth-options {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin-top: -4px;
-    margin-bottom: 22px;
-}
-
-.checkbox-inline {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #475569;
-    cursor: pointer;
-    line-height: 1.4;
-}
-
-.checkbox-inline input {
-    accent-color: #2563eb;
-    cursor: pointer;
 }

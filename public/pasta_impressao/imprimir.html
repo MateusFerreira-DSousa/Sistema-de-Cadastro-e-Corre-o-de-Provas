@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Imprimir Prova - Apta</title>
+
+    <!-- CSS base já existente no projeto -->
+    <link
+        rel="stylesheet"
+        href="/compartilhado/style.css"
+    >
+
+    <!-- CSS exclusivo da página de impressão -->
+    <link
+        rel="stylesheet"
+        href="/pasta_impressao/imprimir.css"
+    >
+
+    <!-- Fonte principal do sistema -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!--
+        Estilo clássico da folha impressa.
+        Esse bloco também será reutilizado dentro do arquivo Word.
+    -->
+    <link rel="stylesheet" id="estilo-folha" href="/pasta_impressao/folha.css">
+</head>
+<body class="dashboard-page pagina-impressao-apta">
+
+    <!-- =========================================
+         BARRA SUPERIOR DE AÇÕES
+         ========================================= -->
+    <header class="topo-impressao no-print">
+        <div class="container topo-impressao__conteudo">
+            <div class="topo-impressao__esquerda">
+                <a
+                    href="/pasta_provas/acessoprof.html"
+                    class="acao-voltar"
+                    id="linkVoltarPainel"
+                >
+                    <span aria-hidden="true">&larr;</span>
+                    <span>Voltar</span>
+                </a>
+
+                <div class="resumo-impressao">
+
+                    <h1 class="resumo-impressao__titulo">
+                        Impressão da prova
+                    </h1>
+                </div>
+            </div>
+
+            <div class="topo-impressao__direita">
+                <label class="toggle-gabarito">
+                    <input
+                        type="checkbox"
+                        id="incluirGabarito"
+                    >
+
+                    <span class="toggle-gabarito__controle"></span>
+
+                    <span class="toggle-gabarito__texto">
+                        Incluir gabarito
+                    </span>
+                </label>
+
+                <div class="acoes-impressao">
+                    <button
+                        type="button"
+                        class="botao-impressao botao-impressao--primario"
+                        id="botaoImprimir"
+                    >
+                        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                            <path d="M6 14h12v8H6zM18 12h1" />
+                        </svg>
+                        <span>Imprimir / PDF</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="botao-impressao botao-impressao--secundario"
+                        id="botaoWord"
+                    >
+                        <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h8" />
+                        </svg>
+                        <span>Word</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container area-impressao">
+        <div
+            id="mensagem"
+            class="error-message"
+            hidden
+            role="alert"
+        ></div>
+
+        <!-- =========================================
+             CABEÇALHO DA PRÉVIA DA PROVA
+             ========================================= -->
+        <section class="cabecalho-preview no-print">
+            <div class="cabecalho-preview__marca">
+                <div class="cabecalho-preview__logo">A</div>
+
+                <div>
+                    <p class="cabecalho-preview__nome">apta.</p>
+                    <p class="cabecalho-preview__subnome">Ambiente de avaliações</p>
+                </div>
+            </div>
+
+            <div class="cabecalho-preview__dados" id="resumoProva">
+                <div class="mini-card-info">
+                    <span class="mini-card-info__rotulo">Turma</span>
+                    <strong class="mini-card-info__valor">—</strong>
+                </div>
+
+                <div class="mini-card-info">
+                    <span class="mini-card-info__rotulo">Data</span>
+                    <strong class="mini-card-info__valor">—</strong>
+                </div>
+
+                <div class="mini-card-info">
+                    <span class="mini-card-info__rotulo">Questões</span>
+                    <strong class="mini-card-info__valor">—</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================
+             ÁREA DA FOLHA DA PROVA
+             ========================================= -->
+        <article class="cartao-folha">
+            <div class="cartao-folha__ornamento no-print"></div>
+
+            <div
+                class="folha-impressao"
+                id="folha"
+            ></div>
+        </article>
+    </main>
+
+    <!-- JS base do projeto -->
+    <script src="/compartilhado/script.js"></script>
+
+    <!-- JS exclusivo da página de impressão -->
+    <script src="/pasta_impressao/imprimir.js"></script>
+</body>
+</html>

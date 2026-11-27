@@ -1,0 +1,114 @@
+/* =========================================
+   SELETORES PADRONIZADOS DO APTA
+   Mantém o elemento select nativo e suas validações.
+   ========================================= */
+
+body select:not([multiple]):not([size]) {
+    box-sizing: border-box;
+    min-height: 44px;
+    max-width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #d7deea;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #17243b;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+body select:not([multiple]):not([size]):hover:not(:disabled) {
+    border-color: #90adeb;
+}
+
+body select:not([multiple]):not([size]):focus-visible {
+    outline: 2px solid #2459d5;
+    outline-offset: 2px;
+}
+
+body select:not([multiple]):not([size]):disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Navegadores modernos: personaliza também a lista aberta.
+   Em navegadores sem suporte, mantém o seletor nativo funcional. */
+@supports (appearance: base-select) {
+    body select:not([multiple]):not([size]),
+    body select:not([multiple]):not([size])::picker(select) {
+        appearance: base-select;
+    }
+
+    body select:not([multiple]):not([size])::picker-icon {
+        color: #637189;
+        transition: rotate 0.18s ease;
+    }
+
+    body select:not([multiple]):not([size]):open::picker-icon {
+        rotate: 180deg;
+        color: #2459d5;
+    }
+
+    body select:not([multiple]):not([size]):open {
+        border-color: #2459d5;
+        box-shadow: 0 0 0 3px #2459d51a;
+    }
+
+    body select:not([multiple]):not([size])::picker(select) {
+        margin-block: 6px;
+        padding: 5px;
+        border: 1px solid #dce4f0;
+        border-radius: 12px;
+        background: #ffffff;
+        color: #17243b;
+        box-shadow: 0 12px 30px #17243b20;
+        max-height: min(320px, 50vh);
+        overflow: auto;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        font-size: 14px;
+    }
+
+    /* Cada opção recebe espaçamento, destaque e indicador de seleção. */
+    body select:not([multiple]):not([size]) option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 36px;
+        padding: 8px 12px;
+        border-radius: 7px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        cursor: pointer;
+    }
+
+    body select:not([multiple]):not([size]) option:hover,
+    body select:not([multiple]):not([size]) option:focus-visible {
+        background: #f1f5fc;
+        color: #2459d5;
+    }
+
+    body select:not([multiple]):not([size]) option:checked {
+        background: #eaf1ff;
+        color: #2459d5;
+        font-weight: 600;
+    }
+
+    body select:not([multiple]):not([size]) option::checkmark {
+        order: 1;
+        margin-left: auto;
+        color: #2459d5;
+    }
+
+    body select:not([multiple]):not([size]) option:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body select {
+        transition: none;
+    }
+}

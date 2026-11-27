@@ -12,8 +12,11 @@
     <!-- CSS principal do sistema -->
     <link
         rel="stylesheet"
-        href="style.css"
+        href="/compartilhado/style.css"
     >
+
+    <!-- Estilos exclusivos da tela de login -->
+    <link rel="stylesheet" href="/pasta_login/login.css">
 
     <!-- Fonte Inter -->
     <link
@@ -76,7 +79,11 @@
                 id="form-login"
             >
                 <fieldset>
-                    <legend class="auth-legend-modern">
+                    <!-- Saudação personalizada de acordo com o acesso escolhido -->
+                    <legend
+                        class="auth-legend-modern"
+                        id="titulo-login"
+                    >
                         Entrar no sistema
                     </legend>
 
@@ -148,7 +155,7 @@
                             Não tem acesso? Peça seu login ao administrador da escola.
                         </p>
 
-                        <a href="index.html">
+                        <a href="/pasta_inicio/index.html">
                             &larr; Voltar ao início
                         </a>
                     </div>
@@ -157,45 +164,9 @@
         </section>
     </main>
 
-    <script src="script.js"></script>
+    <script src="/compartilhado/script.js"></script>
 
-    <script>
-        /* =========================================
-           MOSTRAR / OCULTAR A SENHA
-           ========================================= */
-        document
-            .getElementById('mostrarSenha')
-            .addEventListener('change', (evento) => {
-                const campoSenha = document.getElementById('idSenha');
-
-                campoSenha.type = evento.target.checked
-                    ? 'text'
-                    : 'password';
-            });
-
-        /* =========================================
-           ENVIO DO FORMULÁRIO DE LOGIN
-           Mantém a lógica original do sistema
-           ========================================= */
-        document
-            .getElementById('form-login')
-            .addEventListener('submit', async (evento) => {
-                evento.preventDefault();
-
-                const mensagem = document.getElementById('mensagem');
-
-                try {
-                    const dadosFormulario = Object.fromEntries(
-                        new FormData(evento.target)
-                    );
-
-                    const { role } = await api('/api/login', dadosFormulario);
-
-                    location.href = PAGINA_INICIAL[role];
-                } catch (erro) {
-                    mostrarMensagem(mensagem, erro.message);
-                }
-            });
-    </script>
+    <!-- Eventos exclusivos do formulário de login -->
+    <script src="/pasta_login/login.js"></script>
 </body>
 </html>

@@ -2,9 +2,9 @@
 
 // Página inicial de cada papel depois do login.
 const PAGINA_INICIAL = {
-  superadmin: 'admin.html',
-  professor: 'acessoprof.html',
-  aluno: 'aluno.html',
+  superadmin: '/pasta_admin/admin.html',
+  professor: '/pasta_provas/acessoprof.html',
+  aluno: '/pasta_aluno/aluno.html',
 };
 
 // Chama a API do servidor. Sem corpo = GET; com corpo = POST em JSON.
@@ -17,8 +17,8 @@ async function api(caminho, corpo) {
   };
   const resposta = await fetch(caminho, opcoes);
   const dados = await resposta.json().catch(() => ({}));
-  if (resposta.status === 401 && !location.pathname.endsWith('login.html')) {
-    location.href = 'login.html';
+  if (resposta.status === 401 && !location.pathname.endsWith('/pasta_login/login.html')) {
+    location.href = '/pasta_login/login.html';
   }
   if (!resposta.ok) throw new Error(dados.erro || 'Não foi possível falar com o servidor.');
   return dados;
@@ -28,7 +28,7 @@ async function api(caminho, corpo) {
 async function exigirPapel(...papeis) {
   const eu = await api('/api/eu');
   if (!papeis.includes(eu.role)) {
-    location.href = PAGINA_INICIAL[eu.role] || 'login.html';
+    location.href = PAGINA_INICIAL[eu.role] || '/pasta_login/login.html';
     throw new Error('Sem permissão para esta página.');
   }
   document.querySelectorAll('.nome-usuario').forEach((el) => { el.textContent = eu.nome; });
@@ -37,7 +37,7 @@ async function exigirPapel(...papeis) {
 
 async function sair() {
   await api('/api/sair', {}).catch(() => {});
-  location.href = 'index.html';
+  location.href = '/pasta_inicio/index.html';
 }
 
 // Escapa texto vindo do banco antes de colocar em innerHTML.

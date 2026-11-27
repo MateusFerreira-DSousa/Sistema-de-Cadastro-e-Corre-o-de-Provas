@@ -1,0 +1,51 @@
+/* Estilos exclusivos da alteração de senha. */
+body.auth-page {
+    background:#f5f7fb;
+}
+
+.auth-card {
+    max-width:440px;
+    width:100%;
+    border-radius:18px;
+}
+
+.apta-brand {
+    font-size:28px;
+    font-weight:700;
+    color:#2459d5;
+    margin-bottom:18px;
+}
+
+.senha-title {
+    font-size:23px;
+    margin-bottom:8px;
+}
+
+.senha-desc {
+    color:#64748b;
+    margin-bottom:24px;
+}
+
+.senha-toggle {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:14px 0;
+    color:#475569;
+    font-size:14px;
+}
+
+.senha-toggle input {
+    width:auto;
+}
+
+.auth-card .btn-salvar {
+    background:#2459d5;
+    width:100%;
+}
+
+.auth-links {
+    margin-top:20px;
+}
+
+
